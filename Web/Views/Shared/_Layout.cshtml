@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MIYABI 雅 | Luxury Japanese Fine Dining</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/luxury-japan.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Web.styles.css" asp-append-version="true" />
+</head>
+<body class="seigaiha-pattern washi-texture">
+    <header>
+        <nav class="luxury-navbar">
+            <a class="nav-brand" href="/">
+                <div class="brand-crest">雅</div>
+                <div>
+                    <span class="brand-text">Miyabi</span>
+                    <span class="brand-subtext">Fine Dining</span>
+                </div>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link-custom">Trang chủ</a></li>
+                <li><a href="/#about" class="nav-link-custom">Về chúng tôi</a></li>
+                <li><a href="/#menu" class="nav-link-custom">Thực đơn</a></li>
+                <li><a href="/#atmosphere" class="nav-link-custom">Không gian</a></li>
+            </ul>
+            <div class="nav-right-group">
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <!-- Khu vực khách chưa đăng nhập -->
+                    <div id="nav-guest-actions" class="d-flex align-items-center gap-3">
+                        <a href="/Home/Login" class="nav-auth-link">Đăng nhập</a>
+                        <a href="/Home/Register" class="nav-auth-link">Đăng ký</a>
+                    </div>
+                }
+                else
+                {
+                    <!-- Khu vực tài khoản đã đăng nhập -->
+                    <div id="nav-user-actions" class="d-flex align-items-center gap-3">
+                        <span class="nav-user-welcome">Xin chào, <strong>@User.Identity.Name</strong></span>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a href="/Home/AdminDashboard" class="nav-auth-link" style="color: var(--color-gold); border-color: var(--color-gold); font-size: 0.75rem; padding: 0.3rem 0.8rem;">Quản trị</a>
+                        }
+                        <a href="/Home/Logout" class="nav-logout-link">Đăng xuất</a>
+                    </div>
+                }
+                <a href="/#reservation" class="nav-cta">Đặt bàn ngay</a>
+            </div>
+        </nav>
+    </header>
+
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <footer class="luxury-footer">
+        <div class="footer-grid">
+            <div class="footer-logo-section">
+                <div class="footer-logo-text">雅 • MIYABI</div>
+                <p class="footer-quote">"Nơi ẩm thực hòa quyện cùng nghệ thuật Thiền, mang đến trải nghiệm Omakase tinh tế giữa lòng phố thị."</p>
+            </div>
+            <div class="footer-col">
+                <h4>Giờ Mở Cửa</h4>
+                <p class="mb-2"><strong>Thứ Hai - Chủ Nhật</strong></p>
+                <p class="mb-2">Trưa: 11:30 - 14:30</p>
+                <p>Tối: 17:30 - 22:30</p>
+            </div>
+            <div class="footer-col">
+                <h4>Liên Hệ</h4>
+                <div class="footer-contact-info">
+                    <span>Địa chỉ: Số 17 đường William Speaker, Thủ Đức, Hồ Chí Minh</span>
+                    <span>Hotline: +84 90 123 4567</span>
+                    <span>Email: reservation@miyabi.vn</span>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-copy">
+                &copy; @DateTime.Now.Year - MIYABI Restaurant. All Rights Reserved.
+            </div>
+            <div class="footer-socials">
+                <a href="#" class="social-icon-card facebook" aria-label="Facebook">
+                    <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                </a>
+                <a href="#" class="social-icon-card instagram" aria-label="Instagram">
+                    <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051C.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                </a>
+                <a href="#" class="social-icon-card youtube" aria-label="YouTube">
+                    <svg viewBox="0 0 24 24"><path d="M23.498 6.163a3.003 3.003 0 00-2.11-2.11C19.525 3.545 12 3.545 12 3.545s-7.525 0-9.388.508a3.003 3.003 0 00-2.11 2.11C0 8.027 0 12 0 12s0 3.973.502 5.837a3.003 3.003 0 002.11 2.11c1.863.508 9.388.508 9.388.508s7.525 0 9.388-.508a3.002 3.002 0 002.11-2.11C24 15.973 24 12 24 12s0-3.973-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                </a>
+                <a href="#" class="social-icon-card tiktok" aria-label="TikTok">
+                    <svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.17-2.89-.74-3.94-1.74-.22-.21-.42-.45-.6-.71-.11 1.84-.1 3.67-.1 5.51 0 1.95-.56 3.96-1.76 5.51-1.45 1.85-3.86 2.89-6.19 2.58-2.94-.38-5.46-2.92-5.74-5.88-.38-3.97 2.45-7.79 6.44-8.25.17-.02.35-.03.52-.03v4.03c-1.25.18-2.45.98-2.88 2.18-.58 1.6.09 3.56 1.58 4.38 1.41.78 3.33.4 4.32-.82.68-.84.81-2.02.8-3.08-.01-3.69-.02-7.39-.02-11.08z"/></svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/luxury-japan.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+

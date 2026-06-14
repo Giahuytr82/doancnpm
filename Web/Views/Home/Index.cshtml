@@ -1,0 +1,489 @@
+@{
+    ViewData["Title"] = "Trang Chủ";
+}
+
+<!-- Phần Hero phong cách Cinematic điện ảnh -->
+<section class="hero-section">
+    <img src="~/images/hero.png" alt="Miyabi Hero Background" class="hero-bg" />
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        @if (User.Identity.IsAuthenticated)
+        {
+            <div style="background: rgba(0,0,0,0.6); padding: 10px; border-radius: 5px; margin-bottom: 20px; border: 1px solid var(--color-gold);">
+                <span style="color: white;">Trạng thái: </span>
+                <strong style="color: var(--color-gold);">Đã đăng nhập</strong> | 
+                <span style="color: white;">Quyền hiện tại: </span>
+                <strong style="color: #ff4d4d;">@(User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role)?.Value ?? "Chưa xác định")</strong>
+            </div>
+        }
+        <div class="hero-kanji">雅</div>
+        <h1 class="hero-title">
+            Trải Nghiệm Tinh Hoa
+            <span>ẨM THỰC NHẬT BẢN THƯỢNG HẠNG</span>
+        </h1>
+        <p class="hero-subtitle">
+            Nơi giao thoa giữa nghệ thuật ẩm thực Omakase Kyoto cổ điển và tinh thần tối giản đương đại. 
+            Mỗi món ăn là một tác phẩm nghệ thuật đánh thức mọi giác quan.
+        </p>
+        <div class="hero-buttons">
+            <a href="#reservation" class="btn-premium btn-premium-primary">Đặt Bàn Ngay</a>
+            <a href="#menu" class="btn-premium btn-premium-secondary">Khám Phá Thực Đơn</a>
+        </div>
+    </div>
+    <a href="#about" class="scroll-indicator">
+        <span>Cuộn xuống</span>
+        <div class="scroll-line"></div>
+    </a>
+</section>
+
+<!-- Phần Giới thiệu - Về chúng tôi (About Us) -->
+<section id="about" class="section-wrapper about-section reveal">
+    <div class="about-container">
+        <!-- Khối nội dung giới thiệu -->
+        <div class="about-text">
+            <div class="about-story">
+                <span class="section-subtitle-jp">雅の歴史</span>
+                <h2 class="section-title-en mb-4" style="text-align: left; padding-bottom: 0.8rem; display: block; width: 100%;">Về Chúng Tôi</h2>
+                <h3 class="mb-3" style="color: var(--color-gold);">Khởi nguồn từ Kyoto cổ kính</h3>
+                <p>
+                    Miyabi (雅 - Nhã) được thành lập vào năm 1998 tại một con ngõ nhỏ yên tĩnh thuộc quận Gion, Kyoto. 
+                    Nơi đây khởi đầu như một quán ăn gia đình chuyên biệt phục vụ Omakase, giữ gìn triết lý ẩm thực truyền thống 
+                    kết hợp với sự giản dị, tôn trọng tự nhiên của Thiền học Nhật Bản.
+                </p>
+                <p>
+                    Trải qua hơn hai thập kỷ gìn giữ và phát triển, Miyabi đã mang tinh hoa Omakase vượt khỏi biên giới Nhật Bản. 
+                    Năm 2024, Miyabi chính thức mở cửa chi nhánh Fine Dining độc bản đầu tiên tại TP. Hồ Chí Minh, mang theo nguyên bản 
+                    tinh thần ẩm thực truyền thống kết hợp cùng nghệ thuật phục vụ hiếu khách tinh tế Omotenashi.
+                </p>
+            </div>
+            
+            <div class="about-achievements">
+                <h3 class="mb-3" style="color: var(--color-gold);">Thành tựu đạt được</h3>
+                <div class="achievements-grid">
+                    <!-- Thành tựu 1 -->
+                    <div class="achievement-card">
+                        <div class="ach-icon">
+                            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <h4 class="ach-title">1 Sao Michelin</h4>
+                        <p class="ach-desc">Khẳng định chất lượng ẩm thực đẳng cấp thế giới.</p>
+                    </div>
+
+                    <!-- Thành tựu 2 -->
+                    <div class="achievement-card">
+                        <div class="ach-icon">
+                            <!-- Trohpy Icon -->
+                            <svg viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v3c0 2.24 1.81 4.07 4.05 4.11C8.75 12.39 10.23 13.5 12 13.9V17H9c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2c0-.55-.45-1-1-1h-3v-3.1c1.77-.4 3.25-1.51 3.95-2.79C18.19 11.07 20 9.24 20 7V4c0-1.1-.9-2-2-2zM6 7V4h2v3c0 .82-.18 1.58-.49 2.27C6.61 8.81 6 8 6 7zm11.49 2.27C17.18 8.58 17 7.82 17 7V4h2v3c0 .8-.61 1.61-1.51 2.27z"/></svg>
+                        </div>
+                        <h4 class="ach-title">Asia's 50 Best</h4>
+                        <p class="ach-desc">Vinh danh trong Top nhà hàng xuất sắc tại Châu Á.</p>
+                    </div>
+
+                    <!-- Thành tựu 3 -->
+                    <div class="achievement-card">
+                        <div class="ach-icon">
+                            <!-- Design Award Icon -->
+                            <svg viewBox="0 0 24 24"><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/></svg>
+                        </div>
+                        <h4 class="ach-title">Thiết kế Zen</h4>
+                        <p class="ach-desc">Giải thưởng kiến trúc không gian Thiền đương đại.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Khung ảnh Kyoto cổ kính -->
+        <div class="about-img-frame">
+            <div class="about-img-wrapper">
+                <img src="~/images/gion_street.png" alt="Kyoto Gion Street" class="about-img" />
+                <div class="about-img-overlay"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Phần Danh sách Món ăn Nổi bật -->
+<section id="menu" class="section-wrapper reveal">
+    <div class="section-header">
+        <span class="section-subtitle-jp">お勧め料理</span>
+        <h2 class="section-title-en">Thực Đơn Tinh Tuyển</h2>
+    </div>
+    
+    <div class="dishes-grid">
+        <!-- Món thứ 1 -->
+        <div class="dish-card">
+            <div class="dish-badge">Bếp Trưởng Khuyên Dùng</div>
+            <div class="dish-image-wrapper">
+                <img src="~/images/sashimi.png" alt="Sashimi Tuyển Chọn" class="dish-image" />
+                <div class="dish-image-overlay"></div>
+            </div>
+            <div class="dish-info">
+                <div class="dish-header">
+                    <h3 class="dish-title">Sashimi Kiệt Tác</h3>
+                    <span class="dish-price">2,450k</span>
+                </div>
+                <p class="dish-desc">
+                    Tuyển chọn từ những loại cá béo ngậy và hải sản cao cấp nhất, nhập khẩu trực tiếp trong ngày từ chợ cá Toyosu tại Tokyo.
+                </p>
+                <div class="dish-meta">
+                    <div class="dish-rating">
+                        <!-- Mã hình ảnh SVG cho các ngôi sao đánh giá -->
+                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        <span>(4.9)</span>
+                    </div>
+                    <button class="dish-order-btn" onclick="location.href='#reservation'">
+                        Đặt bàn
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Món thứ 2 -->
+        <div class="dish-card">
+            <div class="dish-badge">Giới Hạn Trong Ngày</div>
+            <div class="dish-image-wrapper">
+                <img src="~/images/wagyu.png" alt="A5 Wagyu Hot Stone" class="dish-image" />
+                <div class="dish-image-overlay"></div>
+            </div>
+            <div class="dish-info">
+                <div class="dish-header">
+                    <h3 class="dish-title">A5 Wagyu Đá Nướng</h3>
+                    <span class="dish-price">3,200k</span>
+                </div>
+                <p class="dish-desc">
+                    Thịt bò Wagyu cực phẩm xếp hạng A5 nướng sơ trên đá núi lửa ấm nóng, giữ trọn vẹn vị ngọt đậm đà và vân mỡ mềm tan như bơ.
+                </p>
+                <div class="dish-meta">
+                    <div class="dish-rating">
+                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        <span>(5.0)</span>
+                    </div>
+                    <button class="dish-order-btn" onclick="location.href='#reservation'">
+                        Đặt bàn
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Món thứ 3 -->
+        <div class="dish-card">
+            <div class="dish-badge">Tinh Hoa Nghệ Thuật</div>
+            <div class="dish-image-wrapper">
+                <img src="~/images/interior.png" alt="Kyoto Omakase Experience" class="dish-image" />
+                <div class="dish-image-overlay"></div>
+            </div>
+            <div class="dish-info">
+                <div class="dish-header">
+                    <h3 class="dish-title">Kyoto Omakase</h3>
+                    <span class="dish-price">4,800k</span>
+                </div>
+                <p class="dish-desc">
+                    Hành trình trải nghiệm ẩm thực độc quyền 12 món do chính Bếp trưởng phục vụ và sáng tạo ngẫu hứng trực tiếp tại quầy gỗ Hinoki.
+                </p>
+                <div class="dish-meta">
+                    <div class="dish-rating">
+                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        <span>(5.0)</span>
+                    </div>
+                    <button class="dish-order-btn" onclick="location.href='#reservation'">
+                        Đặt bàn
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Phần Không gian Kyoto Fine Dining -->
+<section id="atmosphere" class="atmosphere-section">
+    <img src="~/images/interior.png" alt="Kyoto Zen Atmosphere" class="atmosphere-bg" />
+    <div class="atmosphere-overlay"></div>
+    <div class="atmosphere-content reveal">
+        <div class="atmosphere-text">
+            <div class="atmosphere-kanji-huge">禅</div>
+            <span class="section-subtitle-jp">お店 của không gian</span>
+            <h2 class="atmosphere-title">Không Gian Thiền & <span>Nghệ Thuật Kyoto</span></h2>
+            <p class="atmosphere-desc text-white">
+                Miyabi được lấy cảm hứng từ kiến trúc gỗ Hinoki truyền thống của Cố đô Kyoto. 
+                Sự hòa trộn tinh tế giữa ánh sáng đèn lồng ấm áp và không gian yên bình giúp thực khách 
+                hoàn toàn thả lỏng tâm trí để thưởng thức tinh hoa ẩm thực.
+            </p>
+        </div>
+        
+        <!-- Lưới 3 khu vực ăn uống -->
+        <div class="atmosphere-grid">
+            <!-- Khu vực 1 -->
+            <div class="atmosphere-card">
+                <div class="atm-card-img-wrapper">
+                    <img src="~/images/sushi_counter.png" alt="Quầy Sushi Gỗ Hinoki" class="atm-card-img" />
+                </div>
+                <div class="atm-card-info">
+                    <h3 class="atm-card-title">Quầy Bar Omakase</h3>
+                    <p class="atm-card-desc">
+                        Nơi tương tác trực tiếp cùng Bếp trưởng, chiêm ngưỡng nghệ thuật chế biến tinh xảo trên bàn gỗ Hinoki nguyên khối hàng trăm năm tuổi.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Khu vực 2 -->
+            <div class="atmosphere-card">
+                <div class="atm-card-img-wrapper">
+                    <img src="~/images/vip_tatami.png" alt="Phòng VIP Tatami" class="atm-card-img" />
+                </div>
+                <div class="atm-card-info">
+                    <h3 class="atm-card-title">Phòng VIP Tatami</h3>
+                    <p class="atm-card-desc">
+                        Không gian riêng tư khép kín mang đậm phong cách trà đạo Nhật Bản, chiếu tatami êm ái, thích hợp tiếp đối tác hoặc họp mặt gia đình.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Khu vực 3 -->
+            <div class="atmosphere-card">
+                <div class="atm-card-img-wrapper">
+                    <img src="~/images/dining_koi.png" alt="Sảnh Chính Hồ Koi" class="atm-card-img" />
+                </div>
+                <div class="atm-card-info">
+                    <h3 class="atm-card-title">Sảnh Chính Hồ Koi</h3>
+                    <p class="atm-card-desc">
+                        Không gian ăn uống rộng rãi khoáng đạt bên cửa kính lớn, phóng tầm mắt ra hồ cá Koi lung linh sắc màu và khu vườn thiền thanh tịnh.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Phần Đặt bàn hiệu ứng kính mờ (Glassmorphism) -->
+<section id="reservation" class="section-wrapper reservation-section reveal">
+    <div class="reservation-container">
+        <!-- Chi tiết thông tin đặt bàn -->
+        <div class="reserve-details">
+            <span class="section-subtitle-jp">席を予約する</span>
+            <h2 class="reserve-tagline">Kiến Tạo <span>Trải Nghiệm Riêng</span> Cho Đêm Nay</h2>
+            <p>
+                Do triết lý tập trung phục vụ tỉ mỉ từng chi tiết cho từng vị khách, số lượng ghế tại quầy Omakase của chúng tôi giới hạn chỉ 12 vị trí mỗi tối. 
+                Quý khách vui lòng đặt bàn trước để Miyabi có thể chuẩn bị nguyên liệu hoàn hảo nhất.
+            </p>
+            
+            <div class="reserve-info-cards">
+                <div class="reserve-info-card">
+                    <h4>Quầy Omakase Bar</h4>
+                    <p>Giới hạn 12 khách - Phục vụ trực tiếp từ Bếp trưởng.</p>
+                </div>
+                <div class="reserve-info-card">
+                    <h4>Phòng Private VIP</h4>
+                    <p>Yêu cầu đặt trước 24h - Phù hợp từ 4 đến 10 khách.</p>
+                </div>
+                <div class="reserve-info-card">
+                    <h4>Hotline hỗ trợ trực tiếp</h4>
+                    <p>+84 90 123 4567 (Hỗ trợ 24/7)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Biểu mẫu đặt bàn hiệu ứng kính mờ -->
+        <div class="booking-glass-panel">
+            <div class="booking-form-header">
+                <h3>Đặt Bàn</h3>
+                <p class="text-white opacity-75">MIYABI LUXURY FINE DINING</p>
+            </div>
+            
+            <form id="bookingForm" class="booking-form">
+                <!-- Các trường nhập Tên và Số điện thoại -->
+                <div class="form-group-custom">
+                    <label class="form-label-custom" for="GuestName">Họ và Tên</label>
+                    <input type="text" id="GuestName" placeholder="Tên của quý khách..." class="form-input-custom" required />
+                </div>
+                
+                <div class="form-group-custom">
+                    <label class="form-label-custom" for="GuestPhone">Số Điện Thoại</label>
+                    <input type="tel" id="GuestPhone" placeholder="Số điện thoại liên lạc..." class="form-input-custom" required />
+                </div>
+
+                <!-- Trình chọn Ngày và số lượng Khách -->
+                <div class="form-row-custom">
+                    <div class="form-group-custom">
+                        <label class="form-label-custom" for="BookingDate">Chọn Ngày</label>
+                        <input type="date" id="BookingDate" class="form-input-custom" required />
+                    </div>
+                    
+                    <div class="form-group-custom guest-picker-container">
+                        <label class="form-label-custom">Số Khách</label>
+                        <div class="form-input-custom custom-select-trigger">
+                            Chọn số khách
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                        </div>
+                        <input type="hidden" id="GuestCount" required />
+                        <div class="dropdown-menu-custom">
+                            <div class="dropdown-item-custom" data-value="1">1 khách</div>
+                            <div class="dropdown-item-custom" data-value="2">2 khách</div>
+                            <div class="dropdown-item-custom" data-value="3">3 khách</div>
+                            <div class="dropdown-item-custom" data-value="4">4 khách</div>
+                            <div class="dropdown-item-custom" data-value="5-8">5 - 8 khách</div>
+                            <div class="dropdown-item-custom" data-value="9+">Trên 8 khách</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trình chọn Khu vực phục vụ tùy chỉnh -->
+                <div class="form-group-custom">
+                    <label class="form-label-custom">Khu Vực Phục Vụ</label>
+                    <div class="form-input-custom custom-select-trigger">
+                        Chọn khu vực...
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
+                    <input type="hidden" id="SeatingPreference" required />
+                    <div class="dropdown-menu-custom">
+                        <div class="dropdown-item-custom" data-value="Omakase Counter">Quầy Sushi Gỗ Hinoki (Omakase Counter)</div>
+                        <div class="dropdown-item-custom" data-value="Private VIP Room">Phòng VIP Tatami Riêng Tư</div>
+                        <div class="dropdown-item-custom" data-value="Main Dining Room">Sảnh Ăn Chung Cận Cảnh Hồ Koi</div>
+                    </div>
+                </div>
+
+                <!-- Trình chọn Khung giờ phục vụ (Session) -->
+                <div class="form-group-custom">
+                    <label class="form-label-custom">Giờ Phục Vụ (Session)</label>
+                    <input type="hidden" id="SelectedTime" required />
+                    <div class="session-buttons">
+                        <div class="session-btn" data-time="11:30">Trưa 11:30</div>
+                        <div class="session-btn" data-time="17:30">Tối I (17:30)</div>
+                        <div class="session-btn" data-time="19:30">Tối II (19:30)</div>
+                    </div>
+                </div>
+
+                <!-- Nút gửi biểu mẫu -->
+                <button type="submit" class="btn-reserve-submit">Gửi Yêu Cầu Đặt Bàn</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Hộp thoại thông báo Đặt bàn thành công (Modal) -->
+<div id="successModal" class="booking-modal">
+    <div class="modal-content-custom">
+        <div class="modal-crest">雅</div>
+        <h3>Đặt Bàn Thành Công!</h3>
+        <p>
+            Cảm ơn quý khách <strong id="modalName">Quý khách</strong>. Miyabi đang sắp xếp vị trí ngồi tốt nhất cho quý khách. 
+            Mã xác nhận đặt bàn đã được gửi đến số điện thoại của quý khách.
+        </p>
+        
+        <div class="mb-4 text-start border-top border-bottom border-light py-3" style="border-color: rgba(200,169,107,0.2) !important;">
+            <div class="row g-2">
+                <div class="col-6"><span class="text-white opacity-50">Ngày đặt:</span></div>
+                <div class="col-6 text-end"><span id="modalDate" class="text-white font-weight-bold">--/--/----</span></div>
+                
+                <div class="col-6"><span class="text-white opacity-50">Khung giờ:</span></div>
+                <div class="col-6 text-end"><span id="modalTime" class="text-white font-weight-bold">--:--</span></div>
+                
+                <div class="col-6"><span class="text-white opacity-50">Số khách:</span></div>
+                <div class="col-6 text-end"><span id="modalGuests" class="text-white font-weight-bold">- khách</span></div>
+            </div>
+        </div>
+        
+        <button id="closeModalBtn" class="btn-premium btn-premium-primary py-2 px-4" style="font-size:0.75rem;">Đóng Cửa Sổ</button>
+    </div>
+</div>
+
+
+@using Web.Models
+<!-- Phần Phản hồi khách hàng (Feedback) - Bước 7 trong quy trình -->
+<section id="feedback" class="section-wrapper reveal" style="background: #0a0a0a;">
+    <div class="section-header">
+        <span class="section-subtitle-jp">お客様の声</span>
+        <h2 class="section-title-en">Phản Hồi Từ Thực Khách</h2>
+    </div>
+
+    <div class="container">
+        <div class="row g-4">
+            <!-- Hiển thị các đánh giá gần đây -->
+            <div class="col-lg-7">
+                <div class="reviews-list">
+                    @if (ViewBag.Reviews != null)
+                    {
+                        foreach (var review in (List<Review>)ViewBag.Reviews)
+                        {
+                            <div class="review-card mb-4 p-4" style="background: rgba(255,255,255,0.03); border-left: 3px solid var(--color-gold); border-radius: 0 8px 8px 0;">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h4 style="color: var(--color-gold); margin: 0;">@review.CustomerName</h4>
+                                    <div style="color: #ffc107;">@string.Concat(Enumerable.Repeat("★", review.Rating))</div>
+                                </div>
+                                <p class="text-white opacity-75 mb-1" style="font-style: italic;">"@review.Comment"</p>
+                                <small class="opacity-50">@review.CreatedAt.ToString("dd/MM/yyyy")</small>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+            <!-- Form gửi đánh giá mới -->
+            <div class="col-lg-5">
+                <div class="feedback-form p-4" style="background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid rgba(200,169,107,0.2);">
+                    <h3 class="mb-4" style="color: var(--color-gold);">Gửi Cảm Nhận Của Bạn</h3>
+                    <div class="mb-3">
+                        <label class="form-label text-white opacity-75">Tên của bạn</label>
+                        <input type="text" id="revName" class="form-control bg-dark text-white border-secondary" placeholder="Nhập tên...">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-white opacity-75">Đánh giá (1-5 sao)</label>
+                        <select id="revRating" class="form-select bg-dark text-white border-secondary">
+                            <option value="5">★★★★★ (Tuyệt vời)</option>
+                            <option value="4">★★★★ (Rất tốt)</option>
+                            <option value="3">★★★ (Bình thường)</option>
+                            <option value="2">★★ (Cần cải thiện)</option>
+                            <option value="1">★ (Kém)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-white opacity-75">Bình luận</label>
+                        <textarea id="revComment" class="form-control bg-dark text-white border-secondary" rows="3" placeholder="Chia sẻ trải nghiệm của bạn..."></textarea>
+                    </div>
+                    <button onclick="submitReview()" class="btn-premium btn-premium-primary w-100 py-2">Gửi Đánh Giá</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    async function submitReview() {
+        const name = document.getElementById('revName').value;
+        const rating = document.getElementById('revRating').value;
+        const comment = document.getElementById('revComment').value;
+
+        if (!name || !comment) {
+            alert("Vui lòng điền đầy đủ thông tin");
+            return;
+        }
+
+        const response = await fetch('/Home/SubmitReview', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ CustomerName: name, Rating: parseInt(rating), Comment: comment })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            alert("Cảm ơn bạn đã gửi phản hồi!");
+            location.reload();
+        } else {
+            alert("Lỗi: " + data.message);
+        }
+    }
+</script>

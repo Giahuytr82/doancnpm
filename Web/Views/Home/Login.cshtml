@@ -1,0 +1,50 @@
+@{
+    ViewData["Title"] = "Đăng Nhập";
+}
+
+<div class="auth-page-container">
+    <div class="auth-split-left">
+        <div class="auth-bg-overlay"></div>
+        <img src="~/images/interior.png" class="auth-bg-image" alt="Kyoto Zen Dining" />
+        <div class="auth-left-content">
+            <div class="brand-crest large">雅</div>
+            <h2>Miyabi</h2>
+            <p class="japanese-quote">“Ẩm thực là nghệ thuật của sự kiên nhẫn và tinh tế.”</p>
+        </div>
+    </div>
+    <div class="auth-split-right">
+        <div class="auth-form-wrapper">
+            <div class="auth-header-section">
+                <span class="auth-kanji">ログイン</span>
+                <h1>Đăng Nhập</h1>
+                <p>Hành trình trải nghiệm tinh hoa ẩm thực ẩm thực Nhật Bản đang chờ bạn.</p>
+            </div>
+
+            <form asp-action="Login" method="post" class="auth-page-form">
+                @if (ViewBag.Error != null)
+                {
+                    <div class="text-danger mb-3">@ViewBag.Error</div>
+                }
+                <div class="form-group-custom">
+                    <label class="form-label-custom">Email</label>
+                    <input name="email" type="email" class="form-input-custom" placeholder="Nhập email..." required />
+                </div>
+                <div class="form-group-custom">
+                    <label class="form-label-custom">Mật khẩu</label>
+                    <input name="password" type="password" class="form-input-custom" placeholder="Nhập mật khẩu..." required />
+                </div>
+                <div class="auth-actions-row">
+                    <label class="remember-me-custom">
+                        <input type="checkbox" style="accent-color: var(--color-gold);" /> Ghi nhớ đăng nhập
+                    </label>
+                    <a href="#" class="forgot-link">Quên mật khẩu?</a>
+                </div>
+                <button type="submit" class="auth-page-btn">Đăng Nhập</button>
+            </form>
+
+            <div class="auth-switch-prompt">
+                Chưa có tài khoản? <a href="/Home/Register">Đăng ký ngay</a>
+            </div>
+        </div>
+    </div>
+</div>

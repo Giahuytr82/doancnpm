@@ -1,0 +1,54 @@
+@{
+    ViewData["Title"] = "Đăng Ký";
+}
+
+<div class="auth-page-container">
+    <div class="auth-split-left">
+        <div class="auth-bg-overlay"></div>
+        <img src="~/images/gion_street.png" class="auth-bg-image" alt="Gion Street" />
+        <div class="auth-left-content">
+            <div class="brand-crest large">雅</div>
+            <h2>Miyabi</h2>
+            <p class="japanese-quote">“Kết nối truyền thống và hiện đại qua từng hương vị.”</p>
+        </div>
+    </div>
+    <div class="auth-split-right">
+        <div class="auth-form-wrapper">
+            <div class="auth-header-section">
+                <span class="auth-kanji">新規登録</span>
+                <h1>Tạo Tài Khoản</h1>
+                <p>Trở thành thành viên VIP để nhận các đặc quyền đặt bàn trước và ưu đãi đặc biệt.</p>
+            </div>
+
+            @model Web.Models.User
+            <form asp-action="Register" method="post" class="auth-page-form">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group-custom">
+                    <label class="form-label-custom">Họ và Tên</label>
+                    <input asp-for="FullName" type="text" class="form-input-custom" placeholder="Nhập họ và tên..." required />
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>
+                <div class="form-group-custom">
+                    <label class="form-label-custom">Email</label>
+                    <input asp-for="Email" type="email" class="form-input-custom" placeholder="Nhập địa chỉ email..." required />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group-custom">
+                    <label class="form-label-custom">Số điện thoại</label>
+                    <input asp-for="PhoneNumber" type="tel" class="form-input-custom" placeholder="Nhập số điện thoại..." />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+                <div class="form-group-custom">
+                    <label class="form-label-custom">Mật khẩu</label>
+                    <input asp-for="Password" type="password" class="form-input-custom" placeholder="Tạo mật khẩu..." required />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <button type="submit" class="auth-page-btn">Đăng Ký</button>
+            </form>
+
+            <div class="auth-switch-prompt">
+                Đã có tài khoản? <a href="/Home/Login">Đăng nhập</a>
+            </div>
+        </div>
+    </div>
+</div>

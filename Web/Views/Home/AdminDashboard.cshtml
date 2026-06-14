@@ -1,0 +1,300 @@
+@using Web.Models
+@{
+    ViewData["Title"] = "Bảng Điều Khiển Quản Trị";
+    var users = ViewBag.Users as List<User>;
+    var reservations = ViewBag.Reservations as List<Reservation>;
+    var bugs = ViewBag.Bugs as List<Bug>;
+    var reviews = ViewBag.Reviews as List<Review>;
+}
+
+<div class="admin-dashboard-container">
+    <div class="admin-header">
+        <div class="admin-header-title">
+            <span class="admin-kanji">管理パネル</span>
+            <h1>Hệ Thống Quản Trị Miyabi</h1>
+            <p>Quy trình dự án: <strong>Bước 7 - Phản hồi (Feedback)</strong> & Vận hành.</p>
+        </div>
+        <div class="admin-stats">
+            <div class="stat-card">
+                <span class="stat-num">@reservations.Count</span>
+                <span class="stat-label">Đặt Bàn</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-num">@reviews.Count</span>
+                <span class="stat-label">Phản Hồi</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-num">@bugs.Count(b => b.Status != "Closed")</span>
+                <span class="stat-label">Lỗi Cần Sửa</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab điều hướng -->
+    <div class="admin-tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'ReservationsTab')">Quản Lý Đặt Bàn</button>
+        <button class="tab-btn" onclick="openTab(event, 'ReviewsTab')">Quản Lý Phản Hồi</button>
+        <button class="tab-btn" onclick="openTab(event, 'BugsTab')">Quản Lý Lỗi (Testing)</button>
+        <button class="tab-btn" onclick="openTab(event, 'UsersTab')">Quản Lý Người Dùng</button>
+    </div>
+
+    <!-- Tab Đặt Bàn -->
+    <div id="ReservationsTab" class="tab-content active">
+        <div class="admin-table-wrapper">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Khách Hàng</th>
+                        <th>Số Điện Thoại</th>
+                        <th>Ngày Đặt</th>
+                        <th>Giờ</th>
+                        <th>Khu Vực</th>
+                        <th>Số Khách</th>
+                        <th>Trạng Thái</th>
+                        <th>Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var res in reservations)
+                    {
+                        <tr>
+                            <td><strong>@res.GuestName</strong></td>
+                            <td>@res.GuestPhone</td>
+                            <td>@res.BookingDate.ToString("dd/MM/yyyy")</td>
+                            <td><span class="badge-time">@res.SelectedTime</span></td>
+                            <td>@res.SeatingPreference</td>
+                            <td>@res.GuestCount khách</td>
+                            <td><span class="status-badge @res.Status.ToLower()">@res.Status</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button onclick="updateReservationStatus(@res.Id, 'Confirmed')" class="action-btn confirm-btn">Xác nhận</button>
+                                    <button onclick="updateReservationStatus(@res.Id, 'Cancelled')" class="action-btn cancel-btn">Hủy</button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Tab Quản Lý Phản Hồi (Feedback) -->
+    <div id="ReviewsTab" class="tab-content">
+        <div class="admin-table-wrapper">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Khách Hàng</th>
+                        <th>Đánh Giá</th>
+                        <th>Bình Luận</th>
+                        <th>Ngày Gửi</th>
+                        <th>Hiển Thị</th>
+                        <th>Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var review in reviews)
+                    {
+                        <tr>
+                            <td><strong>@review.CustomerName</strong></td>
+                            <td><span style="color: var(--color-gold);">@string.Concat(Enumerable.Repeat("★", review.Rating))</span></td>
+                            <td>@review.Comment</td>
+                            <td>@review.CreatedAt.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <span class="status-badge @(review.IsVisible ? "confirmed" : "cancelled")">
+                                    @(review.IsVisible ? "Đang Hiện" : "Đang Ẩn")
+                                </span>
+                            </td>
+                            <td>
+                                <button onclick="toggleReview(@review.Id)" class="action-btn @(review.IsVisible ? "cancel-btn" : "confirm-btn")">
+                                    @(review.IsVisible ? "Ẩn đi" : "Hiện lại")
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Tab Quản Lý Lỗi (Bug Tracking) -->
+    <div id="BugsTab" class="tab-content">
+        <div class="bug-report-form mb-4" style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; border: 1px solid var(--color-gold);">
+            <h3 style="color: var(--color-gold); margin-bottom: 15px;">Ghi nhận lỗi mới (Tester/QA)</h3>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" id="bugTitle" class="form-control bg-dark text-white border-secondary" placeholder="Tiêu đề lỗi...">
+                </div>
+                <div class="col-md-3">
+                    <select id="bugSeverity" class="form-select bg-dark text-white border-secondary">
+                        <option value="Low">Mức độ: Thấp</option>
+                        <option value="Medium">Mức độ: Trung bình</option>
+                        <option value="High">Mức độ: Nghiêm trọng</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" id="bugDesc" class="form-control bg-dark text-white border-secondary" placeholder="Mô tả chi tiết...">
+                </div>
+                <div class="col-md-2">
+                    <button onclick="submitBug()" class="btn btn-warning w-100">Ghi nhận</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-table-wrapper">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Tiêu Đề</th>
+                        <th>Mức Độ</th>
+                        <th>Trạng Thái</th>
+                        <th>Người Báo</th>
+                        <th>Ngày Tạo</th>
+                        <th>Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var bug in bugs)
+                    {
+                        <tr>
+                            <td><strong>@bug.Title</strong><br/><small class="opacity-50">@bug.Description</small></td>
+                            <td><span class="severity-badge @bug.Severity.ToLower()">@bug.Severity</span></td>
+                            <td><span class="status-badge @bug.Status.ToLower()">@bug.Status</span></td>
+                            <td>@bug.ReportedBy</td>
+                            <td>@bug.CreatedAt.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <select onchange="updateBugStatus(@bug.Id, this.value)" class="form-select form-select-sm bg-dark text-white border-secondary">
+                                    <option value="New" selected="@(bug.Status == "New")">Mới</option>
+                                    <option value="InProgress" selected="@(bug.Status == "InProgress")">Đang sửa</option>
+                                    <option value="Fixed" selected="@(bug.Status == "Fixed")">Đã sửa</option>
+                                    <option value="Closed" selected="@(bug.Status == "Closed")">Đóng</option>
+                                </select>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Tab Người Dùng -->
+    <div id="UsersTab" class="tab-content">
+        <div class="admin-table-wrapper">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Họ Tên</th>
+                        <th>Email</th>
+                        <th>Số Điện Thoại</th>
+                        <th>Quyền Hạn</th>
+                        <th>Ngày Tham Gia</th>
+                        <th>Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in users)
+                    {
+                        <tr>
+                            <td><strong>@user.FullName</strong></td>
+                            <td>@user.Email</td>
+                            <td>@user.PhoneNumber</td>
+                            <td><span class="badge-role @user.Role.ToLower()">@user.Role</span></td>
+                            <td>@user.CreatedAt.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <button class="action-btn cancel-btn" onclick="deleteUser(@user.Id)">Xóa</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid rgba(200,169,107,0.2); padding-bottom: 10px; }
+    .tab-btn { background: none; border: none; color: white; opacity: 0.6; padding: 10px 20px; cursor: pointer; font-family: 'Montserrat', sans-serif; transition: 0.3s; }
+    .tab-btn.active { opacity: 1; color: var(--color-gold); border-bottom: 2px solid var(--color-gold); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .badge-role { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; text-transform: uppercase; font-weight: bold; }
+    .badge-role.admin { background: #ff4d4d; color: white; }
+    .badge-role.user { background: #4d94ff; color: white; }
+    .status-badge.confirmed, .status-badge.fixed, .status-badge.closed { background: #28a745; color: white; }
+    .status-badge.cancelled, .status-badge.new { background: #dc3545; color: white; }
+    .status-badge.pending, .status-badge.inprogress { background: #ffc107; color: #212529; }
+    .severity-badge { padding: 2px 6px; border-radius: 3px; font-size: 0.7rem; font-weight: bold; }
+    .severity-badge.high { background: #ff4d4d; color: white; }
+    .severity-badge.medium { background: #ffa500; color: white; }
+    .severity-badge.low { background: #28a745; color: white; }
+</style>
+
+@section Scripts {
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        async function toggleReview(id) {
+            const response = await fetch('/Home/ToggleReviewVisibility', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: id })
+            });
+            if ((await response.json()).success) location.reload();
+        }
+
+        async function submitBug() {
+            const title = document.getElementById('bugTitle').value;
+            const severity = document.getElementById('bugSeverity').value;
+            const desc = document.getElementById('bugDesc').value;
+            if (!title) { alert("Vui lòng nhập tiêu đề lỗi"); return; }
+            const response = await fetch('/Home/ReportBug', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ Title: title, Severity: severity, Description: desc })
+            });
+            if ((await response.json()).success) location.reload();
+        }
+
+        async function updateBugStatus(id, status) {
+            const response = await fetch('/Home/UpdateBugStatus', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: id, status: status })
+            });
+            if ((await response.json()).success) location.reload();
+        }
+
+        async function updateReservationStatus(id, status) {
+            if (!confirm(`Xác nhận đổi trạng thái?`)) return;
+            const response = await fetch('/Home/UpdateReservationStatus', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: id, status: status })
+            });
+            if ((await response.json()).success) location.reload();
+        }
+
+        async function deleteUser(id) {
+            if (!confirm("Xóa người dùng này?")) return;
+            const response = await fetch('/Home/DeleteUser', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: id })
+            });
+            const data = await response.json();
+            if (data.success) location.reload(); else alert(data.message);
+        }
+    </script>
+}
