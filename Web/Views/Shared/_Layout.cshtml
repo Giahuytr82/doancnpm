@@ -43,10 +43,17 @@
                         {
                             <a href="/Home/AdminDashboard" class="nav-auth-link" style="color: var(--color-gold); border-color: var(--color-gold); font-size: 0.75rem; padding: 0.3rem 0.8rem;">Quản trị</a>
                         }
+                        else
+                        {
+                            <a href="/Home/MyReservations" class="nav-auth-link" style="font-size: 0.75rem; padding: 0.3rem 0.8rem;">Lịch sử đặt bàn</a>
+                        }
                         <a href="/Home/Logout" class="nav-logout-link">Đăng xuất</a>
                     </div>
                 }
-                <a href="/#reservation" class="nav-cta">Đặt bàn ngay</a>
+                @if (!User.IsInRole("Admin"))
+                {
+                    <a href="/#reservation" class="nav-cta">Đặt bàn ngay</a>
+                }
             </div>
         </nav>
     </header>

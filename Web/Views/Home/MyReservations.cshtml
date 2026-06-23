@@ -1,0 +1,111 @@
+@model List<Web.Models.Reservation>
+@{
+    ViewData["Title"] = "Lịch Sử Đặt Bàn";
+}
+
+<div class="container" style="padding-top: 10rem; padding-bottom: 8rem; min-height: 80vh;">
+    <div class="text-center mb-5">
+        <span class="section-subtitle-jp" style="font-family: var(--font-jp); color: var(--color-crimson); font-size: 1.2rem; letter-spacing: 0.4em; margin-bottom: 0.8rem; display: block;">予約履歴</span>
+        <h1 style="font-family: var(--font-serif); font-size: 3rem; color: var(--color-gold);">Lịch Sử Đặt Bàn</h1>
+        <p class="text-white opacity-75">Xem danh sách và trạng thái các yêu cầu đặt bàn của quý khách.</p>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="text-center p-5" style="background: rgba(255,255,255,0.03); border: 1px solid var(--color-border); border-radius: 8px;">
+            <div style="font-size: 3rem; color: var(--color-gold); margin-bottom: 20px;">雅</div>
+            <h3 style="color: var(--color-gold); font-family: var(--font-serif); margin-bottom: 15px;">Chưa Có Lịch Sử Đặt Bàn</h3>
+            <p class="text-white opacity-50 mb-4">Quý khách chưa thực hiện bất kỳ yêu cầu đặt bàn nào.</p>
+            <a href="/#reservation" class="btn-premium btn-premium-primary" style="text-decoration: none;">Đặt Bàn Ngay</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive" style="background: rgba(255,255,255,0.02); border: 1px solid var(--color-border); border-radius: 8px; overflow: hidden;">
+            <table class="table table-dark table-hover mb-0" style="background: transparent;">
+                <thead>
+                    <tr style="border-bottom: 1px solid var(--color-border); font-family: var(--font-serif); color: var(--color-gold);">
+                        <th class="py-3 px-4">Ngày Đặt</th>
+                        <th class="py-3 px-4">Khung Giờ</th>
+                        <th class="py-3 px-4">Khu Vực</th>
+                        <th class="py-3 px-4">Số Khách</th>
+                        <th class="py-3 px-4">Trạng Thái</th>
+                        <th class="py-3 px-4">Ngày Yêu Cầu</th>
+                        <th class="py-3 px-4">Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var res in Model)
+                    {
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <td class="py-3 px-4 align-middle"><strong>@res.BookingDate.ToString("dd/MM/yyyy")</strong></td>
+                            <td class="py-3 px-4 align-middle"><span style="background: rgba(200,169,107,0.1); color: var(--color-gold); padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(200,169,107,0.2);">@res.SelectedTime</span></td>
+                            <td class="py-3 px-4 align-middle">@res.SeatingPreference</td>
+                            <td class="py-3 px-4 align-middle">@res.GuestCount khách</td>
+                            <td class="py-3 px-4 align-middle">
+                                @if (res.Status.Equals("Pending", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <span class="badge bg-warning text-dark" style="padding: 6px 12px; font-weight: 500;">Đang xử lý</span>
+                                }
+                                else if (res.Status.Equals("Confirmed", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <span class="badge bg-success" style="padding: 6px 12px; font-weight: 500;">Đã xác nhận</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger" style="padding: 6px 12px; font-weight: 500;">Đã hủy</span>
+                                }
+                            </td>
+                            <td class="py-3 px-4 align-middle text-white-50">@res.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td class="py-3 px-4 align-middle">
+                                @if (res.Status.Equals("Pending", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <button class="btn btn-sm btn-outline-danger" onclick="cancelReservation(@res.Id)" style="font-size: 0.85rem; border-radius: 4px; padding: 4px 10px; border-color: rgba(220,53,69,0.5); color: #ff6b6b;">Hủy Đặt Bàn</button>
+                                }
+                                else if (res.Status.Equals("Confirmed", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <span style="font-size: 0.8rem; color: var(--color-gold); opacity: 0.85; font-style: italic;">Đã xác nhận (Liên hệ hotline để hủy nếu cần thay đổi)</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted" style="font-size: 0.85rem;">-</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        async function cancelReservation(id) {
+            if (!confirm("Quý khách có chắc chắn muốn hủy yêu cầu đặt bàn này không?")) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/Home/CancelReservationByUser', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id: id })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    alert(data.message || "Đã hủy đặt bàn thành công.");
+                    location.reload();
+                } else {
+                    alert(data.message || "Không thể hủy đặt bàn. Vui lòng thử lại.");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Có lỗi xảy ra trong quá trình xử lý yêu cầu. Vui lòng thử lại sau.");
+            }
+        }
+    </script>
+}

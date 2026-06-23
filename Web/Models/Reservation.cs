@@ -28,5 +28,9 @@ namespace Web.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         
         public string Status { get; set; } = "Pending"; // Pending, Confirmed, Cancelled
+
+        public int? UserId { get; set; }
+
+        public string? TableNumber { get; set; }
     }
 }

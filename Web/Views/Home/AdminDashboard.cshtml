@@ -5,6 +5,19 @@
     var reservations = ViewBag.Reservations as List<Reservation>;
     var bugs = ViewBag.Bugs as List<Bug>;
     var reviews = ViewBag.Reviews as List<Review>;
+
+    // Tính toán số liệu thống kê cao cấp
+    var totalRes = reservations != null ? reservations.Count : 0;
+    var todayBookings = ViewBag.TodayBookingsCount ?? 0;
+    var avgRating = ViewBag.AvgRating ?? 0.0;
+    
+    var omakaseCount = ViewBag.OmakaseCount ?? 0;
+    var vipRoomCount = ViewBag.VipRoomCount ?? 0;
+    var mainDiningCount = ViewBag.MainDiningCount ?? 0;
+
+    double omakasePct = totalRes > 0 ? Math.Round((double)omakaseCount / totalRes * 100, 1) : 0;
+    double vipPct = totalRes > 0 ? Math.Round((double)vipRoomCount / totalRes * 100, 1) : 0;
+    double mainDiningPct = totalRes > 0 ? Math.Round((double)mainDiningCount / totalRes * 100, 1) : 0;
 }
 
 <div class="admin-dashboard-container">
@@ -15,17 +28,77 @@
             <p>Quy trình dự án: <strong>Bước 7 - Phản hồi (Feedback)</strong> & Vận hành.</p>
         </div>
         <div class="admin-stats">
+            <!-- Widget 1: Đặt Bàn Hôm Nay -->
             <div class="stat-card">
-                <span class="stat-num">@reservations.Count</span>
-                <span class="stat-label">Đặt Bàn</span>
+                <div class="stat-num-container">
+                    <span class="stat-num-large">@todayBookings</span>
+                    <span class="stat-num-sub">/ Tổng @totalRes đặt bàn</span>
+                </div>
+                <span class="stat-label" style="font-size: 0.85rem; letter-spacing: 0.05em; color: var(--color-gold); font-weight: bold;">Lượt Đặt Bàn Hôm Nay</span>
             </div>
+            
+            <!-- Widget 2: Đánh Giá Trung Bình -->
             <div class="stat-card">
-                <span class="stat-num">@reviews.Count</span>
-                <span class="stat-label">Phản Hồi</span>
+                <div class="stat-num-container">
+                    <span class="stat-num-large">@avgRating.ToString("0.0")</span>
+                    <span class="stat-num-sub">/ 5.0 sao</span>
+                </div>
+                <span class="stat-label" style="font-size: 0.85rem; letter-spacing: 0.05em; color: var(--color-gold); font-weight: bold;">Điểm Phản Hồi Trung Bình</span>
+                <div class="stat-rating-stars">
+                    @{
+                        int fullStars = (int)Math.Floor(avgRating);
+                        bool hasHalf = (avgRating - fullStars) >= 0.5;
+                        for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= fullStars)
+                            {
+                                <span>★</span>
+                            }
+                            else if (i == fullStars + 1 && hasHalf)
+                            {
+                                <span style="opacity: 0.8;">★</span>
+                            }
+                            else
+                            {
+                                <span style="color: rgba(255,255,255,0.15);">★</span>
+                            }
+                        }
+                    }
+                </div>
             </div>
+
+            <!-- Widget 3: Tỷ Lệ Khu Vực -->
             <div class="stat-card">
-                <span class="stat-num">@bugs.Count(b => b.Status != "Closed")</span>
-                <span class="stat-label">Lỗi Cần Sửa</span>
+                <span class="stat-label" style="font-size: 0.85rem; letter-spacing: 0.05em; color: var(--color-gold); font-weight: bold; margin-bottom: 10px; display: block;">Khu Vực Ưa Thích</span>
+                <div class="stat-progress-section">
+                    <div class="stat-progress-item">
+                        <div class="stat-progress-label">
+                            <span>Omakase Bar</span>
+                            <span>@omakasePct%</span>
+                        </div>
+                        <div class="stat-progress-bar-bg">
+                            <div class="stat-progress-bar-fill" style="width: @omakasePct%;"></div>
+                        </div>
+                    </div>
+                    <div class="stat-progress-item">
+                        <div class="stat-progress-label">
+                            <span>Phòng VIP Tatami</span>
+                            <span>@vipPct%</span>
+                        </div>
+                        <div class="stat-progress-bar-bg">
+                            <div class="stat-progress-bar-fill" style="width: @vipPct%;"></div>
+                        </div>
+                    </div>
+                    <div class="stat-progress-item">
+                        <div class="stat-progress-label">
+                            <span>Sảnh Hồ Koi</span>
+                            <span>@mainDiningPct%</span>
+                        </div>
+                        <div class="stat-progress-bar-bg">
+                            <div class="stat-progress-bar-fill" style="width: @mainDiningPct%;"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -36,10 +109,23 @@
         <button class="tab-btn" onclick="openTab(event, 'ReviewsTab')">Quản Lý Phản Hồi</button>
         <button class="tab-btn" onclick="openTab(event, 'BugsTab')">Quản Lý Lỗi (Testing)</button>
         <button class="tab-btn" onclick="openTab(event, 'UsersTab')">Quản Lý Người Dùng</button>
+        <button class="tab-btn" onclick="openTab(event, 'DishesTab')">Quản Lý Món Ăn</button>
     </div>
 
     <!-- Tab Đặt Bàn -->
     <div id="ReservationsTab" class="tab-content active">
+        <!-- Bộ lọc khu vực đặt bàn -->
+        <div class="table-filter-bar mb-3" style="display: flex; gap: 15px; align-items: center; background: rgba(255,255,255,0.02); padding: 12px 20px; border-radius: 6px; border: 1px solid rgba(200,169,107,0.15);">
+            <label style="color: var(--color-gold); font-weight: 500; font-size: 0.9rem; margin-bottom: 0;">Lọc theo Khu Vực:</label>
+            <select id="filterArea" onchange="filterReservations()" class="form-select bg-dark text-white border-secondary" style="max-width: 320px; font-size: 0.85rem; border-radius: 4px;">
+                <option value="All">Tất cả khu vực</option>
+                <option value="Omakase Counter">Quầy Sushi Gỗ Hinoki (Omakase Bar)</option>
+                <option value="Small VIP Room">Phòng VIP Tatami Nhỏ (4-6 khách)</option>
+                <option value="Large VIP Room">Phòng VIP Tatami Lớn (8-12 khách)</option>
+                <option value="Main Dining Room">Sảnh Ăn Chung Hồ Koi</option>
+            </select>
+        </div>
+
         <div class="admin-table-wrapper">
             <table class="admin-table">
                 <thead>
@@ -49,6 +135,7 @@
                         <th>Ngày Đặt</th>
                         <th>Giờ</th>
                         <th>Khu Vực</th>
+                        <th>Vị Trí Bàn</th>
                         <th>Số Khách</th>
                         <th>Trạng Thái</th>
                         <th>Thao Tác</th>
@@ -57,18 +144,40 @@
                 <tbody>
                     @foreach (var res in reservations)
                     {
-                        <tr>
-                            <td><strong>@res.GuestName</strong></td>
+                        var bookingUser = users?.FirstOrDefault(u => u.Id == res.UserId);
+                        <tr class="res-row" data-area="@res.SeatingPreference">
+                            <td>
+                                <strong>@res.GuestName</strong>
+                                @if (bookingUser != null)
+                                {
+                                    <br/><small class="opacity-50" style="font-size: 0.75rem;">TK: @bookingUser.Email</small>
+                                }
+                                else
+                                {
+                                    <br/><small class="opacity-50" style="font-size: 0.75rem;">TK: Không có</small>
+                                }
+                            </td>
                             <td>@res.GuestPhone</td>
                             <td>@res.BookingDate.ToString("dd/MM/yyyy")</td>
                             <td><span class="badge-time">@res.SelectedTime</span></td>
                             <td>@res.SeatingPreference</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(res.TableNumber))
+                                {
+                                    <span class="badge bg-dark text-warning" style="border: 1px solid var(--color-gold); font-size: 0.75rem; padding: 4px 8px;">@res.TableNumber</span>
+                                }
+                                else
+                                {
+                                    <span class="text-white-50" style="font-size: 0.8rem; font-style: italic;">Chưa chọn</span>
+                                }
+                            </td>
                             <td>@res.GuestCount khách</td>
                             <td><span class="status-badge @res.Status.ToLower()">@res.Status</span></td>
                             <td>
                                 <div class="action-buttons">
                                     <button onclick="updateReservationStatus(@res.Id, 'Confirmed')" class="action-btn confirm-btn">Xác nhận</button>
                                     <button onclick="updateReservationStatus(@res.Id, 'Cancelled')" class="action-btn cancel-btn">Hủy</button>
+                                    <button onclick="deleteReservation(@res.Id)" class="action-btn cancel-btn" style="background: #dc3545;">Xóa</button>
                                 </div>
                             </td>
                         </tr>
@@ -106,9 +215,12 @@
                                 </span>
                             </td>
                             <td>
-                                <button onclick="toggleReview(@review.Id)" class="action-btn @(review.IsVisible ? "cancel-btn" : "confirm-btn")">
-                                    @(review.IsVisible ? "Ẩn đi" : "Hiện lại")
-                                </button>
+                                <div class="action-buttons" style="display: flex; gap: 5px;">
+                                    <button onclick="toggleReview(@review.Id)" class="action-btn @(review.IsVisible ? "cancel-btn" : "confirm-btn")">
+                                        @(review.IsVisible ? "Ẩn đi" : "Hiện lại")
+                                    </button>
+                                    <button onclick="deleteReview(@review.Id)" class="action-btn cancel-btn" style="background: #dc3545;">Xóa</button>
+                                </div>
                             </td>
                         </tr>
                     }
@@ -209,6 +321,90 @@
             </table>
         </div>
     </div>
+
+    <!-- Tab Quản Lý Món Ăn -->
+    <div id="DishesTab" class="tab-content">
+        <!-- Form Thêm / Sửa Món Ăn -->
+        <div class="bug-report-form mb-4" style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; border: 1px solid var(--color-gold);">
+            <h3 id="dishFormTitle" style="color: var(--color-gold); margin-bottom: 15px;">Thêm Món Ăn Mới</h3>
+            <input type="hidden" id="dishId" value="" />
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="text-white-50 small mb-1">Tên món ăn</label>
+                    <input type="text" id="dishName" class="form-control bg-dark text-white border-secondary" placeholder="Tên món ăn...">
+                </div>
+                <div class="col-md-2">
+                    <label class="text-white-50 small mb-1">Giá bán</label>
+                    <input type="text" id="dishPrice" class="form-control bg-dark text-white border-secondary" placeholder="Ví dụ: 1,200k...">
+                </div>
+                <div class="col-md-2">
+                    <label class="text-white-50 small mb-1">Nhãn (Badge)</label>
+                    <input type="text" id="dishBadge" class="form-control bg-dark text-white border-secondary" placeholder="Ví dụ: Bếp trưởng khuyên dùng...">
+                </div>
+                <div class="col-md-2">
+                    <label class="text-white-50 small mb-1">Đánh giá (Rating)</label>
+                    <input type="number" id="dishRating" min="1" max="5" step="0.1" value="5.0" class="form-control bg-dark text-white border-secondary">
+                </div>
+                <div class="col-md-3">
+                    <label class="text-white-50 small mb-1">Hình ảnh món ăn</label>
+                    <input type="file" id="dishImageFile" accept="image/*" class="form-control bg-dark text-white border-secondary">
+                    <input type="hidden" id="dishImageUrl" value="" />
+                    <small id="currentImageLabel" class="text-white-50 d-block mt-1" style="font-size: 0.75rem; word-break: break-all;"></small>
+                </div>
+                <div class="col-md-12">
+                    <label class="text-white-50 small mb-1">Mô tả món ăn</label>
+                    <textarea id="dishDescription" class="form-control bg-dark text-white border-secondary" rows="2" placeholder="Nhập mô tả chi tiết món ăn..."></textarea>
+                </div>
+                <div class="col-md-12 text-end">
+                    <button id="btnCancelEdit" onclick="cancelDishEdit()" class="btn btn-outline-secondary me-2" style="display: none;">Hủy</button>
+                    <button id="btnSubmitDish" onclick="submitDish()" class="btn btn-warning px-4">Lưu Món Ăn</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-table-wrapper">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Hình Ảnh</th>
+                        <th>Tên Món Ăn</th>
+                        <th>Giá</th>
+                        <th>Nhãn</th>
+                        <th>Đánh Giá</th>
+                        <th>Mô Tả</th>
+                        <th>Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var dishes = ViewBag.Dishes as List<Dish>;
+                        if (dishes != null)
+                        {
+                            foreach (var dish in dishes)
+                            {
+                                <tr>
+                                    <td>
+                                        <img src="@(dish.ImageUrl.StartsWith("http") ? dish.ImageUrl : Url.Content("~/images/" + dish.ImageUrl))" alt="@dish.Name" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid var(--color-border);" />
+                                    </td>
+                                    <td><strong>@dish.Name</strong></td>
+                                    <td><span class="badge bg-dark text-warning">@dish.Price</span></td>
+                                    <td><span class="badge bg-secondary">@dish.Badge</span></td>
+                                    <td><span style="color: var(--color-gold);">★ @dish.Rating.ToString("0.0")</span></td>
+                                    <td><small class="opacity-75">@dish.Description</small></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button onclick="editDish(@Json.Serialize(dish))" class="action-btn confirm-btn" style="background: #28a745;">Sửa</button>
+                                            <button onclick="deleteDish(@dish.Id)" class="action-btn cancel-btn">Xóa</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <style>
@@ -227,6 +423,90 @@
     .severity-badge.high { background: #ff4d4d; color: white; }
     .severity-badge.medium { background: #ffa500; color: white; }
     .severity-badge.low { background: #28a745; color: white; }
+
+    /* Premium Admin Dashboard Stats */
+    .admin-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+        margin-top: 15px;
+        margin-bottom: 30px;
+        width: 100%;
+    }
+    .stat-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s, border-color 0.3s;
+    }
+    .stat-card:hover {
+        transform: translateY(-3px);
+        border-color: var(--color-gold);
+    }
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, var(--color-gold), var(--color-crimson));
+    }
+    .stat-num-container {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+    .stat-num-large {
+        font-family: var(--font-serif);
+        font-size: 2.5rem;
+        color: var(--color-gold);
+        line-height: 1;
+    }
+    .stat-num-sub {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.5);
+    }
+    .stat-rating-stars {
+        color: var(--color-gold);
+        font-size: 1.1rem;
+        margin-top: 5px;
+    }
+    .stat-progress-section {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .stat-progress-item {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+    .stat-progress-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.75);
+    }
+    .stat-progress-bar-bg {
+        background: rgba(255, 255, 255, 0.1);
+        height: 6px;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+    .stat-progress-bar-fill {
+        background: var(--color-gold);
+        height: 100%;
+        border-radius: 3px;
+        transition: width 0.8s ease-in-out;
+    }
 </style>
 
 @section Scripts {
@@ -243,6 +523,20 @@
             }
             document.getElementById(tabName).style.display = "block";
             evt.currentTarget.className += " active";
+        }
+
+        function filterReservations() {
+            const selectedArea = document.getElementById('filterArea').value;
+            const rows = document.querySelectorAll('.res-row');
+            
+            rows.forEach(row => {
+                const rowArea = row.getAttribute('data-area');
+                if (selectedArea === "All" || rowArea === selectedArea) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
         }
 
         async function toggleReview(id) {
@@ -295,6 +589,159 @@
             });
             const data = await response.json();
             if (data.success) location.reload(); else alert(data.message);
+        }
+
+        async function deleteReservation(id) {
+            if (!confirm("Bạn có chắc chắn muốn xóa đặt bàn này khỏi hệ thống?")) return;
+            const response = await fetch('/Home/DeleteReservation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: id })
+            });
+            const data = await response.json();
+            if (data.success) location.reload(); else alert(data.message);
+        }
+
+        async function deleteReview(id) {
+            if (!confirm("Bạn có chắc chắn muốn xóa phản hồi này khỏi hệ thống?")) return;
+            const response = await fetch('/Home/DeleteReview', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: id })
+            });
+            const data = await response.json();
+            if (data.success) location.reload(); else alert(data.message);
+        }
+
+        function editDish(dish) {
+            document.getElementById('dishFormTitle').innerText = "Chỉnh Sửa Món Ăn: " + dish.name;
+            document.getElementById('dishId').value = dish.id;
+            document.getElementById('dishName').value = dish.name;
+            document.getElementById('dishPrice').value = dish.price;
+            document.getElementById('dishBadge').value = dish.badge || '';
+            document.getElementById('dishRating').value = dish.rating;
+            document.getElementById('dishImageUrl').value = dish.imageUrl;
+            document.getElementById('dishDescription').value = dish.description || '';
+            document.getElementById('currentImageLabel').innerText = "Ảnh hiện tại: " + dish.imageUrl;
+            document.getElementById('dishImageFile').value = "";
+            
+            document.getElementById('btnCancelEdit').style.display = "inline-block";
+        }
+
+        function cancelDishEdit() {
+            document.getElementById('dishFormTitle').innerText = "Thêm Món Ăn Mới";
+            document.getElementById('dishId').value = "";
+            document.getElementById('dishName').value = "";
+            document.getElementById('dishPrice').value = "";
+            document.getElementById('dishBadge').value = "";
+            document.getElementById('dishRating').value = "5.0";
+            document.getElementById('dishImageUrl').value = "";
+            document.getElementById('dishDescription').value = "";
+            document.getElementById('currentImageLabel').innerText = "";
+            document.getElementById('dishImageFile').value = "";
+            
+            document.getElementById('btnCancelEdit').style.display = "none";
+        }
+
+        async function submitDish() {
+            const idVal = document.getElementById('dishId').value;
+            const name = document.getElementById('dishName').value.trim();
+            const price = document.getElementById('dishPrice').value.trim();
+            const badge = document.getElementById('dishBadge').value.trim();
+            const rating = parseFloat(document.getElementById('dishRating').value);
+            const imageUrl = document.getElementById('dishImageUrl').value.trim();
+            const description = document.getElementById('dishDescription').value.trim();
+            const fileInput = document.getElementById('dishImageFile');
+
+            let uploadedFileName = imageUrl;
+
+            // Nếu người dùng chọn file ảnh mới, tiến hành upload lên server trước
+            if (fileInput.files.length > 0) {
+                const formData = new FormData();
+                formData.append("file", fileInput.files[0]);
+
+                const submitBtn = document.getElementById('btnSubmitDish');
+                const cancelBtn = document.getElementById('btnCancelEdit');
+                
+                submitBtn.disabled = true;
+                submitBtn.innerText = "Đang tải ảnh...";
+                if (cancelBtn) cancelBtn.style.display = "none";
+
+                try {
+                    const uploadResponse = await fetch('/Home/UploadDishImage', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const uploadResult = await uploadResponse.json();
+                    if (uploadResult.success) {
+                        uploadedFileName = uploadResult.fileName;
+                    } else {
+                        alert("Lỗi tải ảnh lên: " + uploadResult.message);
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = "Lưu Món Ăn";
+                        if (cancelBtn && idVal) cancelBtn.style.display = "inline-block";
+                        return;
+                    }
+                } catch (err) {
+                    alert("Lỗi kết nối khi tải ảnh lên.");
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "Lưu Món Ăn";
+                    if (cancelBtn && idVal) cancelBtn.style.display = "inline-block";
+                    return;
+                }
+            }
+
+            if (!name || !price || !uploadedFileName) {
+                alert("Vui lòng nhập đầy đủ: Tên món ăn, Giá và chọn file Hình ảnh");
+                return;
+            }
+
+            const dishData = {
+                Name: name,
+                Price: price,
+                Badge: badge,
+                Rating: rating,
+                ImageUrl: uploadedFileName,
+                Description: description
+            };
+
+            let endpoint = '/Home/AddDish';
+            if (idVal) {
+                dishData.Id = parseInt(idVal);
+                endpoint = '/Home/UpdateDish';
+            }
+
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dishData)
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                location.reload();
+            } else {
+                alert("Lỗi: " + data.message);
+                const submitBtn = document.getElementById('btnSubmitDish');
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Lưu Món Ăn";
+            }
+        }
+
+        async function deleteDish(id) {
+            if (!confirm("Bạn có chắc chắn muốn xóa món ăn này khỏi thực đơn?")) return;
+            const response = await fetch('/Home/DeleteDish', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: id })
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                location.reload();
+            } else {
+                alert("Lỗi: " + data.message);
+            }
         }
     </script>
 }

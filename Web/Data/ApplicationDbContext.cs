@@ -13,6 +13,7 @@ namespace Web.Data
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<Bug> Bugs { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<Dish> Dishes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

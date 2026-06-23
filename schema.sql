@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS `Reservations` (
   `SelectedTime` longtext NOT NULL,
   `CreatedAt` datetime(6) NOT NULL,
   `Status` longtext NOT NULL,
+  `UserId` int DEFAULT NULL,
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 

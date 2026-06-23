@@ -7,15 +7,7 @@
     <img src="~/images/hero.png" alt="Miyabi Hero Background" class="hero-bg" />
     <div class="hero-overlay"></div>
     <div class="hero-content">
-        @if (User.Identity.IsAuthenticated)
-        {
-            <div style="background: rgba(0,0,0,0.6); padding: 10px; border-radius: 5px; margin-bottom: 20px; border: 1px solid var(--color-gold);">
-                <span style="color: white;">Trạng thái: </span>
-                <strong style="color: var(--color-gold);">Đã đăng nhập</strong> | 
-                <span style="color: white;">Quyền hiện tại: </span>
-                <strong style="color: #ff4d4d;">@(User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role)?.Value ?? "Chưa xác định")</strong>
-            </div>
-        }
+
         <div class="hero-kanji">雅</div>
         <h1 class="hero-title">
             Trải Nghiệm Tinh Hoa
@@ -110,102 +102,44 @@
     </div>
     
     <div class="dishes-grid">
-        <!-- Món thứ 1 -->
-        <div class="dish-card">
-            <div class="dish-badge">Bếp Trưởng Khuyên Dùng</div>
-            <div class="dish-image-wrapper">
-                <img src="~/images/sashimi.png" alt="Sashimi Tuyển Chọn" class="dish-image" />
-                <div class="dish-image-overlay"></div>
-            </div>
-            <div class="dish-info">
-                <div class="dish-header">
-                    <h3 class="dish-title">Sashimi Kiệt Tác</h3>
-                    <span class="dish-price">2,450k</span>
-                </div>
-                <p class="dish-desc">
-                    Tuyển chọn từ những loại cá béo ngậy và hải sản cao cấp nhất, nhập khẩu trực tiếp trong ngày từ chợ cá Toyosu tại Tokyo.
-                </p>
-                <div class="dish-meta">
-                    <div class="dish-rating">
-                        <!-- Mã hình ảnh SVG cho các ngôi sao đánh giá -->
-                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                        <span>(4.9)</span>
+        @if (ViewBag.Dishes != null)
+        {
+            foreach (var dish in (List<Web.Models.Dish>)ViewBag.Dishes)
+            {
+                <div class="dish-card">
+                    @if (!string.IsNullOrEmpty(dish.Badge))
+                    {
+                        <div class="dish-badge">@dish.Badge</div>
+                    }
+                    <div class="dish-image-wrapper">
+                        <img src="@(dish.ImageUrl.StartsWith("http") ? dish.ImageUrl : Url.Content("~/images/" + dish.ImageUrl))" alt="@dish.Name" class="dish-image" />
+                        <div class="dish-image-overlay"></div>
                     </div>
-                    <button class="dish-order-btn" onclick="location.href='#reservation'">
-                        Đặt bàn
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Món thứ 2 -->
-        <div class="dish-card">
-            <div class="dish-badge">Giới Hạn Trong Ngày</div>
-            <div class="dish-image-wrapper">
-                <img src="~/images/wagyu.png" alt="A5 Wagyu Hot Stone" class="dish-image" />
-                <div class="dish-image-overlay"></div>
-            </div>
-            <div class="dish-info">
-                <div class="dish-header">
-                    <h3 class="dish-title">A5 Wagyu Đá Nướng</h3>
-                    <span class="dish-price">3,200k</span>
-                </div>
-                <p class="dish-desc">
-                    Thịt bò Wagyu cực phẩm xếp hạng A5 nướng sơ trên đá núi lửa ấm nóng, giữ trọn vẹn vị ngọt đậm đà và vân mỡ mềm tan như bơ.
-                </p>
-                <div class="dish-meta">
-                    <div class="dish-rating">
-                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                        <span>(5.0)</span>
+                    <div class="dish-info">
+                        <div class="dish-header">
+                            <h3 class="dish-title">@dish.Name</h3>
+                            <span class="dish-price">@dish.Price</span>
+                        </div>
+                        <p class="dish-desc">
+                            @dish.Description
+                        </p>
+                        <div class="dish-meta">
+                            <div class="dish-rating">
+                                @for (int i = 0; i < 5; i++)
+                                {
+                                    <svg viewBox="0 0 24 24" style="fill: @(i < Math.Round(dish.Rating) ? "var(--color-gold)" : "rgba(255,255,255,0.1)"); width: 14px; height: 14px;"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                                }
+                                <span>(@dish.Rating.ToString("0.0"))</span>
+                            </div>
+                            <button class="dish-order-btn" onclick="location.href='#reservation'">
+                                Đặt bàn
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </button>
+                        </div>
                     </div>
-                    <button class="dish-order-btn" onclick="location.href='#reservation'">
-                        Đặt bàn
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </button>
                 </div>
-            </div>
-        </div>
-
-        <!-- Món thứ 3 -->
-        <div class="dish-card">
-            <div class="dish-badge">Tinh Hoa Nghệ Thuật</div>
-            <div class="dish-image-wrapper">
-                <img src="~/images/interior.png" alt="Kyoto Omakase Experience" class="dish-image" />
-                <div class="dish-image-overlay"></div>
-            </div>
-            <div class="dish-info">
-                <div class="dish-header">
-                    <h3 class="dish-title">Kyoto Omakase</h3>
-                    <span class="dish-price">4,800k</span>
-                </div>
-                <p class="dish-desc">
-                    Hành trình trải nghiệm ẩm thực độc quyền 12 món do chính Bếp trưởng phục vụ và sáng tạo ngẫu hứng trực tiếp tại quầy gỗ Hinoki.
-                </p>
-                <div class="dish-meta">
-                    <div class="dish-rating">
-                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                        <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                        <span>(5.0)</span>
-                    </div>
-                    <button class="dish-order-btn" onclick="location.href='#reservation'">
-                        Đặt bàn
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </button>
-                </div>
-            </div>
-        </div>
+            }
+        }
     </div>
 </section>
 
@@ -299,77 +233,332 @@
 
         <!-- Biểu mẫu đặt bàn hiệu ứng kính mờ -->
         <div class="booking-glass-panel">
-            <div class="booking-form-header">
-                <h3>Đặt Bàn</h3>
-                <p class="text-white opacity-75">MIYABI LUXURY FINE DINING</p>
-            </div>
-            
-            <form id="bookingForm" class="booking-form">
-                <!-- Các trường nhập Tên và Số điện thoại -->
-                <div class="form-group-custom">
-                    <label class="form-label-custom" for="GuestName">Họ và Tên</label>
-                    <input type="text" id="GuestName" placeholder="Tên của quý khách..." class="form-input-custom" required />
+            @if (User.Identity.IsAuthenticated)
+            {
+                <div class="booking-form-header">
+                    <h3>Đặt Bàn</h3>
+                    <p class="text-white opacity-75">MIYABI LUXURY FINE DINING</p>
                 </div>
                 
-                <div class="form-group-custom">
-                    <label class="form-label-custom" for="GuestPhone">Số Điện Thoại</label>
-                    <input type="tel" id="GuestPhone" placeholder="Số điện thoại liên lạc..." class="form-input-custom" required />
-                </div>
-
-                <!-- Trình chọn Ngày và số lượng Khách -->
-                <div class="form-row-custom">
+                <form id="bookingForm" class="booking-form">
+                    <!-- Các trường nhập Tên và Số điện thoại -->
                     <div class="form-group-custom">
-                        <label class="form-label-custom" for="BookingDate">Chọn Ngày</label>
-                        <input type="date" id="BookingDate" class="form-input-custom" required />
+                        <label class="form-label-custom" for="GuestName">Họ và Tên</label>
+                        <input type="text" id="GuestName" placeholder="Tên của quý khách..." class="form-input-custom" value="@User.Identity.Name" required />
                     </div>
                     
-                    <div class="form-group-custom guest-picker-container">
-                        <label class="form-label-custom">Số Khách</label>
+                    <div class="form-group-custom">
+                        <label class="form-label-custom" for="GuestPhone">Số Điện Thoại</label>
+                        <input type="tel" id="GuestPhone" placeholder="Số điện thoại liên lạc..." class="form-input-custom" required />
+                    </div>
+
+                    <!-- Trình chọn Ngày và số lượng Khách -->
+                    <div class="form-row-custom">
+                        <div class="form-group-custom">
+                            <label class="form-label-custom" for="BookingDate">Chọn Ngày</label>
+                            <input type="date" id="BookingDate" class="form-input-custom" required />
+                        </div>
+                        
+                        <div class="form-group-custom guest-picker-container">
+                            <label class="form-label-custom">Số Khách</label>
+                            <div class="form-input-custom custom-select-trigger">
+                                Chọn số khách
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                            </div>
+                            <input type="hidden" id="GuestCount" required />
+                            <div class="dropdown-menu-custom">
+                                <div class="dropdown-item-custom" data-value="1">1 khách</div>
+                                <div class="dropdown-item-custom" data-value="2">2 khách</div>
+                                <div class="dropdown-item-custom" data-value="3">3 khách</div>
+                                <div class="dropdown-item-custom" data-value="4">4 khách</div>
+                                <div class="dropdown-item-custom" data-value="5-8">5 - 8 khách</div>
+                                <div class="dropdown-item-custom" data-value="9+">Trên 8 khách</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trình chọn Khu vực phục vụ tùy chỉnh -->
+                    <div class="form-group-custom">
+                        <label class="form-label-custom">Khu Vực Phục Vụ</label>
                         <div class="form-input-custom custom-select-trigger">
-                            Chọn số khách
+                            Chọn khu vực...
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
                         </div>
-                        <input type="hidden" id="GuestCount" required />
+                        <input type="hidden" id="SeatingPreference" required />
                         <div class="dropdown-menu-custom">
-                            <div class="dropdown-item-custom" data-value="1">1 khách</div>
-                            <div class="dropdown-item-custom" data-value="2">2 khách</div>
-                            <div class="dropdown-item-custom" data-value="3">3 khách</div>
-                            <div class="dropdown-item-custom" data-value="4">4 khách</div>
-                            <div class="dropdown-item-custom" data-value="5-8">5 - 8 khách</div>
-                            <div class="dropdown-item-custom" data-value="9+">Trên 8 khách</div>
+                            <div class="dropdown-item-custom" data-value="Omakase Counter">Quầy Sushi Gỗ Hinoki (Omakase Bar - Tối đa 12 khách)</div>
+                            <div class="dropdown-item-custom" data-value="Small VIP Room">Phòng VIP Tatami Nhỏ (Từ 4 - 6 khách)</div>
+                            <div class="dropdown-item-custom" data-value="Large VIP Room">Phòng VIP Tatami Lớn (Từ 8 - 12 khách)</div>
+                            <div class="dropdown-item-custom" data-value="Main Dining Room">Sảnh Ăn Chung Hồ Koi (Bàn 2 - 8 khách)</div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Trình chọn Khu vực phục vụ tùy chỉnh -->
-                <div class="form-group-custom">
-                    <label class="form-label-custom">Khu Vực Phục Vụ</label>
-                    <div class="form-input-custom custom-select-trigger">
-                        Chọn khu vực...
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                    <!-- Trình chọn Khung giờ phục vụ (Session) -->
+                    <div class="form-group-custom">
+                        <label class="form-label-custom">Giờ Phục Vụ (Session)</label>
+                        <input type="hidden" id="SelectedTime" required />
+                        <div class="session-buttons">
+                            <div class="session-btn" data-time="11:30">Trưa 11:30</div>
+                            <div class="session-btn" data-time="17:30">Tối I (17:30)</div>
+                            <div class="session-btn" data-time="19:30">Tối II (19:30)</div>
+                        </div>
                     </div>
-                    <input type="hidden" id="SeatingPreference" required />
-                    <div class="dropdown-menu-custom">
-                        <div class="dropdown-item-custom" data-value="Omakase Counter">Quầy Sushi Gỗ Hinoki (Omakase Counter)</div>
-                        <div class="dropdown-item-custom" data-value="Private VIP Room">Phòng VIP Tatami Riêng Tư</div>
-                        <div class="dropdown-item-custom" data-value="Main Dining Room">Sảnh Ăn Chung Cận Cảnh Hồ Koi</div>
+
+                    <!-- Sơ đồ vị trí bàn ghế tương tác động -->
+                    <input type="hidden" id="SelectedTableNumber" required />
+
+                    <style>
+                        .seating-area-omakase {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            gap: 20px;
+                            width: 100%;
+                            max-width: 450px;
+                        }
+                        .omakase-counter-line {
+                            width: 80%;
+                            height: 12px;
+                            background: linear-gradient(90deg, #c8a96b, #8c6b30);
+                            border-radius: 6px;
+                            position: relative;
+                            box-shadow: 0 0 15px rgba(200, 169, 107, 0.4);
+                            margin-bottom: 5px;
+                        }
+                        .omakase-counter-label {
+                            position: absolute;
+                            top: -22px;
+                            left: 50%;
+                            transform: translateX(-50%);
+                            font-size: 0.75rem;
+                            color: var(--color-gold);
+                            letter-spacing: 0.2em;
+                            text-transform: uppercase;
+                            white-space: nowrap;
+                        }
+                        .omakase-seats-grid {
+                            display: grid;
+                            grid-template-columns: repeat(6, 1fr);
+                            gap: 12px;
+                            width: 100%;
+                        }
+                        .seat-item {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            gap: 5px;
+                            cursor: pointer;
+                            padding: 8px;
+                            border-radius: 6px;
+                            border: 1px solid rgba(255, 255, 255, 0.05);
+                            background: rgba(255, 255, 255, 0.02);
+                            transition: 0.25s ease;
+                        }
+                        .seat-item:hover:not(.occupied) {
+                            background: rgba(200, 169, 107, 0.15);
+                            border-color: var(--color-gold);
+                            transform: translateY(-2px);
+                        }
+                        .seat-icon {
+                            width: 20px;
+                            height: 20px;
+                            border-radius: 50%;
+                            background: #444;
+                            border: 2px solid #666;
+                            transition: 0.25s ease;
+                        }
+                        .seat-item.vacant .seat-icon {
+                            background: #554a32;
+                            border-color: var(--color-gold);
+                        }
+                        .seat-item.selected .seat-icon {
+                            background: var(--color-gold) !important;
+                            border-color: #fff !important;
+                            box-shadow: 0 0 12px var(--color-gold);
+                        }
+                        .seat-item.occupied {
+                            cursor: not-allowed;
+                            opacity: 0.4;
+                        }
+                        .seat-item.occupied .seat-icon {
+                            background: #802a2a !important;
+                            border-color: #ff4d4d !important;
+                        }
+                        .seat-label {
+                            font-size: 0.65rem;
+                            color: rgba(255,255,255,0.7);
+                        }
+
+                        /* VIP Rooms Style */
+                        .seating-area-vip {
+                            display: flex;
+                            gap: 20px;
+                            width: 100%;
+                            max-width: 500px;
+                            justify-content: center;
+                        }
+                        .vip-room-card {
+                            flex: 1;
+                            aspect-ratio: 1.3;
+                            max-width: 180px;
+                            border: 2px dashed rgba(200, 169, 107, 0.3);
+                            border-radius: 10px;
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            align-items: center;
+                            padding: 12px;
+                            background: rgba(255, 255, 255, 0.01);
+                            cursor: pointer;
+                            transition: 0.3s ease;
+                            position: relative;
+                        }
+                        .vip-room-card:hover:not(.occupied) {
+                            border-color: var(--color-gold);
+                            background: rgba(200, 169, 107, 0.08);
+                            transform: translateY(-3px);
+                        }
+                        .vip-room-card.selected {
+                            border-color: var(--color-gold) !important;
+                            border-style: solid !important;
+                            background: rgba(200, 169, 107, 0.2) !important;
+                            box-shadow: 0 0 18px rgba(200, 169, 107, 0.3);
+                        }
+                        .vip-room-card.occupied {
+                            cursor: not-allowed;
+                            border-color: #ff4d4d !important;
+                            background: rgba(128, 42, 42, 0.2) !important;
+                            opacity: 0.5;
+                        }
+                        .vip-room-kanji {
+                            font-family: var(--font-jp);
+                            font-size: 1.8rem;
+                            color: rgba(255, 255, 255, 0.15);
+                            margin-bottom: 5px;
+                            transition: 0.3s;
+                        }
+                        .vip-room-card.selected .vip-room-kanji {
+                            color: var(--color-gold);
+                        }
+                        .vip-room-name {
+                            font-family: var(--font-serif);
+                            font-size: 0.9rem;
+                            color: var(--color-gold);
+                            font-weight: bold;
+                        }
+                        .vip-room-capacity {
+                            font-size: 0.7rem;
+                            color: rgba(255, 255, 255, 0.5);
+                            margin-top: 3px;
+                        }
+
+                        /* Main Dining Style */
+                        .seating-area-dining {
+                            display: grid;
+                            grid-template-columns: repeat(3, 1fr);
+                            gap: 12px;
+                            width: 100%;
+                            max-width: 500px;
+                        }
+                        .dining-table-card {
+                            border: 1px solid rgba(255, 255, 255, 0.08);
+                            border-radius: 8px;
+                            padding: 10px;
+                            background: rgba(255, 255, 255, 0.02);
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            cursor: pointer;
+                            transition: 0.25s ease;
+                            position: relative;
+                        }
+                        .dining-table-card:hover:not(.occupied) {
+                            border-color: var(--color-gold);
+                            background: rgba(200, 169, 107, 0.15);
+                            transform: translateY(-2px);
+                        }
+                        .dining-table-card.selected {
+                            border-color: var(--color-gold) !important;
+                            background: rgba(200, 169, 107, 0.25) !important;
+                            box-shadow: 0 0 15px rgba(200, 169, 107, 0.3);
+                        }
+                        .dining-table-card.occupied {
+                            cursor: not-allowed;
+                            border-color: #ff4d4d !important;
+                            background: rgba(128, 42, 42, 0.15) !important;
+                            opacity: 0.4;
+                        }
+                        .table-visual {
+                            width: 28px;
+                            height: 18px;
+                            background: #555;
+                            border-radius: 4px;
+                            margin-bottom: 6px;
+                            transition: 0.25s ease;
+                        }
+                        .dining-table-card.selected .table-visual {
+                            background: var(--color-gold);
+                        }
+                        .dining-table-card.occupied .table-visual {
+                            background: #802a2a;
+                        }
+                        .table-name {
+                            font-size: 0.75rem;
+                            color: #fff;
+                            font-weight: bold;
+                        }
+                        .table-desc {
+                            font-size: 0.6rem;
+                            color: rgba(255, 255, 255, 0.5);
+                            margin-top: 2px;
+                            text-align: center;
+                        }
+                        .badge-status-occupied {
+                            position: absolute;
+                            top: 4px;
+                            right: 4px;
+                            background: #ff4d4d;
+                            color: #fff;
+                            font-size: 0.5rem;
+                            padding: 1px 3px;
+                            border-radius: 2px;
+                        }
+                    </style>
+
+                    <div id="seatingMapContainer" style="display: none; margin-top: 20px; margin-bottom: 20px; padding: 20px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--color-border); border-radius: 8px;">
+                        <h4 style="color: var(--color-gold); font-size: 0.9rem; font-family: var(--font-serif); margin-bottom: 15px; text-align: center; border-bottom: 1px solid rgba(200, 169, 107, 0.2); padding-bottom: 8px; letter-spacing: 0.1em;">
+                            SƠ ĐỒ CHỌN VỊ TRÍ NGỒI
+                        </h4>
+                        
+                        <div id="seatingMapWrapper" style="display: flex; justify-content: center; align-items: center; min-height: 180px;">
+                            <!-- Vẽ động từ JS -->
+                        </div>
+                        
+                        <p id="tableSelectNotice" class="text-white opacity-50 text-center mt-3" style="font-size: 0.75rem; font-style: italic; margin-bottom: 0;">
+                            Vui lòng chọn bàn/ghế sáng màu trên sơ đồ.
+                        </p>
+                    </div>
+
+                    <!-- Nút gửi biểu mẫu -->
+                    <button type="submit" class="btn-reserve-submit">Gửi Yêu Cầu Đặt Bàn</button>
+                </form>
+            }
+            else
+            {
+                <div class="booking-form-header" style="text-align: center; padding: 40px 20px;">
+                    <div style="font-size: 3rem; color: var(--color-gold); margin-bottom: 20px;">雅</div>
+                    <h3 style="font-family: var(--font-display); font-size: 1.5rem; margin-bottom: 15px; color: var(--color-gold);">Yêu Cầu Đăng Nhập</h3>
+                    <p class="text-white opacity-75" style="font-size: 0.95rem; line-height: 1.6; margin-bottom: 30px;">
+                        Để mang lại trải nghiệm phục vụ chu đáo nhất và bảo mật thông tin đặt bàn của quý khách, xin vui lòng đăng nhập tài khoản trước khi thực hiện đặt bàn.
+                    </p>
+                    <a href="/Home/Login" class="btn-premium btn-premium-primary" style="display: inline-block; text-decoration: none; padding: 12px 30px;">Đăng Nhập Ngay</a>
+                    <div style="margin-top: 15px;">
+                        <span class="text-white opacity-50" style="font-size: 0.85rem;">Chưa có tài khoản? </span>
+                        <a href="/Home/Register" style="color: var(--color-gold); font-size: 0.85rem; text-decoration: none;">Đăng ký tại đây</a>
                     </div>
                 </div>
-
-                <!-- Trình chọn Khung giờ phục vụ (Session) -->
-                <div class="form-group-custom">
-                    <label class="form-label-custom">Giờ Phục Vụ (Session)</label>
-                    <input type="hidden" id="SelectedTime" required />
-                    <div class="session-buttons">
-                        <div class="session-btn" data-time="11:30">Trưa 11:30</div>
-                        <div class="session-btn" data-time="17:30">Tối I (17:30)</div>
-                        <div class="session-btn" data-time="19:30">Tối II (19:30)</div>
-                    </div>
-                </div>
-
-                <!-- Nút gửi biểu mẫu -->
-                <button type="submit" class="btn-reserve-submit">Gửi Yêu Cầu Đặt Bàn</button>
-            </form>
+            }
         </div>
     </div>
 </section>
@@ -394,6 +583,9 @@
                 
                 <div class="col-6"><span class="text-white opacity-50">Số khách:</span></div>
                 <div class="col-6 text-end"><span id="modalGuests" class="text-white font-weight-bold">- khách</span></div>
+
+                <div class="col-6"><span class="text-white opacity-50">Vị trí bàn/ghế:</span></div>
+                <div class="col-6 text-end"><span id="modalTable" class="text-white font-weight-bold" style="color: var(--color-gold);">-</span></div>
             </div>
         </div>
         
@@ -434,28 +626,42 @@
 
             <!-- Form gửi đánh giá mới -->
             <div class="col-lg-5">
-                <div class="feedback-form p-4" style="background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid rgba(200,169,107,0.2);">
-                    <h3 class="mb-4" style="color: var(--color-gold);">Gửi Cảm Nhận Của Bạn</h3>
-                    <div class="mb-3">
-                        <label class="form-label text-white opacity-75">Tên của bạn</label>
-                        <input type="text" id="revName" class="form-control bg-dark text-white border-secondary" placeholder="Nhập tên...">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div class="feedback-form p-4" style="background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid rgba(200,169,107,0.2);">
+                        <h3 class="mb-4" style="color: var(--color-gold);">Gửi Cảm Nhận Của Bạn</h3>
+                        <div class="mb-3">
+                            <label class="form-label text-white opacity-75">Tên của bạn</label>
+                            <input type="text" id="revName" class="form-control bg-dark text-white border-secondary" placeholder="Nhập tên..." value="@User.Identity.Name">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-white opacity-75">Đánh giá (1-5 sao)</label>
+                            <select id="revRating" class="form-select bg-dark text-white border-secondary">
+                                <option value="5">★★★★★ (Tuyệt vời)</option>
+                                <option value="4">★★★★ (Rất tốt)</option>
+                                <option value="3">★★★ (Bình thường)</option>
+                                <option value="2">★★ (Cần cải thiện)</option>
+                                <option value="1">★ (Kém)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-white opacity-75">Bình luận</label>
+                            <textarea id="revComment" class="form-control bg-dark text-white border-secondary" rows="3" placeholder="Chia sẻ trải nghiệm của bạn..."></textarea>
+                        </div>
+                        <button onclick="submitReview()" class="btn-premium btn-premium-primary w-100 py-2">Gửi Đánh Giá</button>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label text-white opacity-75">Đánh giá (1-5 sao)</label>
-                        <select id="revRating" class="form-select bg-dark text-white border-secondary">
-                            <option value="5">★★★★★ (Tuyệt vời)</option>
-                            <option value="4">★★★★ (Rất tốt)</option>
-                            <option value="3">★★★ (Bình thường)</option>
-                            <option value="2">★★ (Cần cải thiện)</option>
-                            <option value="1">★ (Kém)</option>
-                        </select>
+                }
+                else
+                {
+                    <div class="feedback-form p-4" style="background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid rgba(200,169,107,0.2); text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 300px;">
+                        <div style="font-size: 2.5rem; color: var(--color-gold); margin-bottom: 15px;">雅</div>
+                        <h3 class="mb-3" style="color: var(--color-gold); font-size: 1.3rem;">Chia Sẻ Trải Nghiệm</h3>
+                        <p class="text-white opacity-75 mb-4" style="font-size: 0.9rem; line-height: 1.5; text-align: center;">
+                            Chỉ thực khách đã đăng nhập mới có thể gửi đánh giá và cảm nhận về dịch vụ tại nhà hàng của chúng tôi.
+                        </p>
+                        <a href="/Home/Login" class="btn-premium btn-premium-primary w-100 py-2" style="text-decoration: none; text-align: center;">Đăng Nhập Để Đánh Giá</a>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label text-white opacity-75">Bình luận</label>
-                        <textarea id="revComment" class="form-control bg-dark text-white border-secondary" rows="3" placeholder="Chia sẻ trải nghiệm của bạn..."></textarea>
-                    </div>
-                    <button onclick="submitReview()" class="btn-premium btn-premium-primary w-100 py-2">Gửi Đánh Giá</button>
-                </div>
+                }
             </div>
         </div>
     </div>
