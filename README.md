@@ -38,12 +38,22 @@ Chào mừng bạn đến với dự án **Hệ thống Đặt bàn Nhà hàng N
 
 ## 🚀 Hướng Dẫn Cài Đặt Và Khởi Chạy (Installation & Setup)
 
-### 1. Yêu Cầu Hệ Thống (Prerequisites)
-- Đã cài đặt **.NET 8.0 SDK** (kiểm tra bằng lệnh `dotnet --version`).
-- Đã cài đặt **MySQL Server** và **MySQL Workbench**.
-- Trình soạn thảo mã nguồn **Visual Studio 2022** hoặc **VS Code**.
+### 1. Chuẩn Bị Môi Trường (Prerequisites)
+Bạn cần chuẩn bị các công cụ phát triển sau:
+- **Visual Studio 2022 & .NET 8.0 SDK (Khuyên dùng)**:
+  1. Tải [Visual Studio Community 2022](https://visualstudio.microsoft.com/downloads/) (miễn phí).
+  2. Mở **Visual Studio Installer** trên máy tính.
+  3. Chọn **Modify** (Chỉnh sửa) phiên bản VS 2022 của bạn.
+  4. Tại tab **Workloads**, tích chọn gói **ASP.NET and web development** (Phát triển ứng dụng Web và ASP.NET). Gói này tự động cài đặt kèm .NET 8.0 SDK và Runtime.
+  5. Nhấn **Modify** để bắt đầu tải về và cài đặt.
+- **MySQL Server & MySQL Workbench**:
+  1. Tải [MySQL Installer](https://dev.mysql.com/downloads/installer/).
+  2. Cài đặt bản Community Server và thiết lập mật khẩu tài khoản `root` (Mật khẩu mặc định kết nối của dự án là `123456`).
+  3. Đảm bảo service `MySQL80` đang chạy.
 
-### 2. Các Bước Cài Đặt
+> *Lưu ý: Nếu phát triển bằng **VS Code** thay vì Visual Studio, bạn hãy tải và cài đặt độc lập tệp cài đặt tại [Trang chủ Microsoft .NET 8.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0).*
+
+### 2. Các Bước Khởi Chạy Dự Án
 
 **Bước 1: Tải mã nguồn về máy**
 ```bash
@@ -52,7 +62,7 @@ cd doancnpm
 ```
 
 **Bước 2: Cấu hình kết nối cơ sở dữ liệu**
-Mở tệp `Web/appsettings.json` và cập nhật thông tin tài khoản MySQL của bạn:
+Mở tệp `Web/appsettings.json` và cập nhật thông tin tài khoản MySQL của bạn nếu mật khẩu của bạn khác với `123456`:
 ```json
 "ConnectionStrings": {
   "DefaultConnection": "Server=localhost;Port=3306;Database=quanly;Uid=root;Pwd=MAT_KHAU_MYSQL_CUA_BAN;"
@@ -60,12 +70,14 @@ Mở tệp `Web/appsettings.json` và cập nhật thông tin tài khoản MySQL
 ```
 
 **Bước 3: Khởi tạo database và bảng dữ liệu**
-Mở terminal tại thư mục `Web/` và chạy lệnh cập nhật database:
+Mở cửa sổ Terminal tại thư mục `Web/` và chạy lệnh cập nhật database:
 ```bash
 dotnet ef database update
 ```
+*(Hoặc dùng công cụ Package Manager Console trong Visual Studio và gõ lệnh `Update-Database`).*
 
 **Bước 4: Khởi chạy ứng dụng**
+Chạy ứng dụng bằng cách nhấn phím **F5** trong Visual Studio, hoặc mở terminal tại thư mục `Web/` và gõ:
 ```bash
 dotnet run
 ```
