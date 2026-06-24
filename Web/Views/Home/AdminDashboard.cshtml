@@ -522,8 +522,30 @@
                 tablinks[i].className = tablinks[i].className.replace(" active", "");
             }
             document.getElementById(tabName).style.display = "block";
-            evt.currentTarget.className += " active";
+            
+            // --- ANTIGRAVITY EDIT: Xác định button active và lưu trạng thái vào localStorage ---
+            let targetBtn = evt ? evt.currentTarget : null;
+            if (!targetBtn) {
+                targetBtn = Array.from(tablinks).find(btn => btn.getAttribute("onclick") && btn.getAttribute("onclick").includes(tabName));
+            }
+            if (targetBtn) {
+                targetBtn.className += " active";
+            }
+            
+            localStorage.setItem("activeAdminTab", tabName);
+            // ---------------------------------------------------------------------------------
         }
+
+        // --- ANTIGRAVITY ADD: Tự động khôi phục tab đang hoạt động khi tải xong trang ---
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedTab = localStorage.getItem("activeAdminTab");
+            if (savedTab && document.getElementById(savedTab)) {
+                openTab(null, savedTab);
+            } else {
+                openTab(null, 'ReservationsTab'); // mặc định hiển thị tab đặt bàn
+            }
+        });
+        // -------------------------------------------------------------------------------
 
         function filterReservations() {
             const selectedArea = document.getElementById('filterArea').value;
