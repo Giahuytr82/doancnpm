@@ -47,12 +47,38 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string email, string password)
         {
+            // --- ANTIGRAVITY ADD: Tự động khởi tạo/nâng cấp tài khoản Admin1701@gmail.com ---
+            if (email != null && email.Equals("Admin1701@gmail.com", StringComparison.OrdinalIgnoreCase))
+            {
+                var existingAdmin = await _context.Users.FirstOrDefaultAsync(u => u.Email == "Admin1701@gmail.com");
+                if (existingAdmin == null)
+                {
+                    var newAdmin = new User
+                    {
+                        Email = "Admin1701@gmail.com",
+                        Password = password,
+                        FullName = "Quản Trị Viên Miyabi",
+                        Role = "Admin",
+                        PhoneNumber = "0901234567",
+                        CreatedAt = DateTime.Now
+                    };
+                    _context.Users.Add(newAdmin);
+                    await _context.SaveChangesAsync();
+                }
+                else if (existingAdmin.Role != "Admin")
+                {
+                    existingAdmin.Role = "Admin";
+                    await _context.SaveChangesAsync();
+                }
+            }
+            // -------------------------------------------------------------------------------
+
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
             if (user != null)
             {
-                // --- ANTIGRAVITY EDIT: Đặc cách Admin cho email admin123@gmail.com ---
+                // --- ANTIGRAVITY EDIT: Đặc cách Admin cho email Admin1701@gmail.com ---
                 string userRole = user.Role;
-                if (user.Email.Equals("admin123@gmail.com", StringComparison.OrdinalIgnoreCase))
+                if (user.Email.Equals("Admin1701@gmail.com", StringComparison.OrdinalIgnoreCase))
                 {
                     userRole = "Admin";
                 }
@@ -274,7 +300,7 @@ namespace Web.Controllers
                 int id = data.GetProperty("id").GetInt32();
                 var user = await _context.Users.FindAsync(id);
                 if (user != null) {
-                    if (user.Email.Equals("admin123@gmail.com", StringComparison.OrdinalIgnoreCase)) {
+                    if (user.Email.Equals("Admin1701@gmail.com", StringComparison.OrdinalIgnoreCase)) {
                         return Json(new { success = false, message = "Không thể xóa tài khoản Admin chính." });
                     }
                     _context.Users.Remove(user);

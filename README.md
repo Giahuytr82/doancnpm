@@ -88,6 +88,6 @@ Sau đó, mở trình duyệt và truy cập vào địa chỉ hiển thị trê
  Tài Khoản Trải Nghiệm Mặc Định
 
 - *Tài khoản Admin (Quản trị):**
-  - Email: `admin123@gmail.com`
+  - Email: `Admin1701@gmail.com`
   - Mật khẩu: `123456`
 - Tài khoản User (Khách hàng): Bạn có thể đăng ký tài khoản mới trực tiếp trên giao diện của website để trải nghiệm tính năng đặt bàn và xem lịch sử đặt bàn cá nhân.
