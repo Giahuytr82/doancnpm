@@ -23,6 +23,24 @@ namespace Web.Controllers
 
         public async Task<IActionResult> Index()
         {
+            // --- ANTIGRAVITY ADD: Tự động khởi tạo món Mỳ Udon Tempura nếu chưa có trong DB ---
+            var hasUdon = await _context.Dishes.AnyAsync(d => d.Name == "Mỳ Udon Tempura");
+            if (!hasUdon)
+            {
+                var udonDish = new Dish
+                {
+                    Name = "Mỳ Udon Tempura",
+                    Price = "280k",
+                    Badge = "Phổ biến",
+                    Rating = 4.9,
+                    ImageUrl = "tempura_udon.png",
+                    Description = "Sợi mỳ Udon dày dai truyền thống hòa quyện cùng nước súp Dashi thanh ngọt từ cá bào và tảo bẹ, dùng kèm với tôm Tempura chiên giòn rụm."
+                };
+                _context.Dishes.Add(udonDish);
+                await _context.SaveChangesAsync();
+            }
+            // ---------------------------------------------------------------------------------
+
             var reviews = await _context.Reviews.Where(r => r.IsVisible).OrderByDescending(r => r.CreatedAt).Take(5).ToListAsync();
             var dishes = await _context.Dishes.ToListAsync();
             ViewBag.Reviews = reviews;
