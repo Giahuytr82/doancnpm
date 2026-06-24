@@ -140,7 +140,21 @@ document.addEventListener("DOMContentLoaded", () => {
         fetch(`/Home/GetOccupiedTables?date=${date}&time=${time}`)
             .then(res => res.json())
             .then(occupiedTables => {
-                drawSeatingMap(area, occupiedTables);
+                // --- ANTIGRAVITY EDIT: Phân rã danh sách bàn/ghế bị chiếm nếu được lưu dạng phẩy ---
+                const flatOccupiedList = [];
+                if (Array.isArray(occupiedTables)) {
+                    occupiedTables.forEach(t => {
+                        if (t && t.includes(",")) {
+                            t.split(",").forEach(item => {
+                                if (item.trim()) flatOccupiedList.push(item.trim());
+                            });
+                        } else if (t) {
+                            flatOccupiedList.push(t.trim());
+                        }
+                    });
+                }
+                drawSeatingMap(area, flatOccupiedList);
+                // ---------------------------------------------------------------------------------
             })
             .catch(err => {
                 console.error("Error loading tables:", err);
@@ -286,17 +300,56 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // Bắt sự kiện click chọn bàn trống
-        const vacantElements = wrapper.querySelectorAll(".seat-item.vacant, .vip-room-card.vacant, .dining-table-card.vacant");
-        vacantElements.forEach(el => {
-            el.addEventListener("click", function() {
-                wrapper.querySelectorAll(".selected").forEach(s => s.classList.remove("selected"));
-                this.classList.add("selected");
-                
-                const tableId = this.dataset.table;
-                document.getElementById("SelectedTableNumber").value = tableId;
-                notice.innerHTML = `Quý khách đang chọn vị trí: <strong style="color: var(--color-gold); font-size: 0.85rem;">${tableId}</strong>`;
+        if (area === "Omakase Counter") {
+            const vacantSeats = wrapper.querySelectorAll(".seat-item.vacant");
+            vacantSeats.forEach(el => {
+                el.addEventListener("click", function() {
+                    // Xác định khoảng giới hạn số ghế được chọn tương ứng với số khách
+                    let min = 1, max = 1;
+                    if (guests === "2") { min = 2; max = 2; }
+                    else if (guests === "3") { min = 3; max = 3; }
+                    else if (guests === "4") { min = 4; max = 4; }
+                    else if (guests === "5-6") { min = 5; max = 6; }
+                    else if (guests === "7-8") { min = 7; max = 8; }
+                    else if (guests === "9-12") { min = 9; max = 12; }
+
+                    // Nếu đã chọn rồi thì bỏ chọn (toggle)
+                    if (this.classList.contains("selected")) {
+                        this.classList.remove("selected");
+                    } else {
+                        // Nếu chưa chọn, kiểm tra xem đã đạt giới hạn tối đa chưa
+                        const currentSelectedCount = wrapper.querySelectorAll(".seat-item.selected").length;
+                        if (currentSelectedCount >= max) {
+                            alert(`Quý khách đã chọn tối đa ${max} ghế tương ứng với số lượng khách đăng ký.`);
+                            return;
+                        }
+                        this.classList.add("selected");
+                    }
+
+                    // Cập nhật lại danh sách ghế chọn
+                    const selectedSeats = Array.from(wrapper.querySelectorAll(".seat-item.selected")).map(s => s.dataset.table);
+                    document.getElementById("SelectedTableNumber").value = selectedSeats.join(", ");
+                    if (selectedSeats.length > 0) {
+                        notice.innerHTML = `Vị trí ghế đã chọn: <strong style="color: var(--color-gold); font-size: 0.85rem;">${selectedSeats.join(", ")}</strong> (${selectedSeats.length}/${max} ghế)`;
+                    } else {
+                        notice.innerHTML = `Vui lòng chọn bàn/ghế sáng màu trên sơ đồ.`;
+                    }
+                });
             });
-        });
+        } else {
+            // Các khu vực khác (VIP, Sảnh chính) giữ nguyên chọn 1 bàn duy nhất
+            const vacantTables = wrapper.querySelectorAll(".vip-room-card.vacant, .dining-table-card.vacant");
+            vacantTables.forEach(el => {
+                el.addEventListener("click", function() {
+                    wrapper.querySelectorAll(".selected").forEach(s => s.classList.remove("selected"));
+                    this.classList.add("selected");
+                    
+                    const tableId = this.dataset.table;
+                    document.getElementById("SelectedTableNumber").value = tableId;
+                    notice.innerHTML = `Quý khách đang chọn vị trí: <strong style="color: var(--color-gold); font-size: 0.85rem;">${tableId}</strong>`;
+                });
+            });
+        }
     }
     // --------------------------------------------------------------------------------
 
@@ -368,6 +421,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 alert("Quý khách vui lòng bấm chọn vị trí bàn/ghế cụ thể trên sơ đồ vị trí ngồi.");
                 return;
             }
+
+            // --- ANTIGRAVITY EDIT: Kiểm tra số lượng ghế Omakase đã chọn khớp với số khách đăng ký ---
+            if (area === "Omakase Counter") {
+                const selectedSeats = selectedTable.split(",").map(s => s.trim()).filter(s => s.length > 0);
+                let min = 1, max = 1;
+                if (guests === "2") { min = 2; max = 2; }
+                else if (guests === "3") { min = 3; max = 3; }
+                else if (guests === "4") { min = 4; max = 4; }
+                else if (guests === "5-6") { min = 5; max = 6; }
+                else if (guests === "7-8") { min = 7; max = 8; }
+                else if (guests === "9-12") { min = 9; max = 12; }
+
+                if (selectedSeats.length < min || selectedSeats.length > max) {
+                    if (min === max) {
+                        alert(`Quý khách đã đăng ký ${min} khách. Vui lòng chọn đúng ${min} ghế trên sơ đồ quầy Omakase (Hiện tại đã chọn: ${selectedSeats.length} ghế).`);
+                    } else {
+                        alert(`Quý khách đã đăng ký nhóm ${min}-${max} khách. Vui lòng chọn từ ${min} đến ${max} ghế trên sơ đồ quầy Omakase (Hiện tại đã chọn: ${selectedSeats.length} ghế).`);
+                    }
+                    return;
+                }
+            }
+            // -----------------------------------------------------------------------------------------
             // -------------------------------------
 
             const bookingData = {
