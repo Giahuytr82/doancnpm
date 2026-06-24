@@ -56,8 +56,8 @@ document.addEventListener("DOMContentLoaded", () => {
             
             this.parentElement.classList.remove("active");
 
-            // --- ANTIGRAVITY EDIT: Kích hoạt tải sơ đồ bàn khi đổi Khu Vực ---
-            if (hiddenInput.id === "SeatingPreference") {
+            // --- ANTIGRAVITY EDIT: Kích hoạt tải sơ đồ bàn khi đổi Khu Vực hoặc Số Khách ---
+            if (hiddenInput.id === "SeatingPreference" || hiddenInput.id === "GuestCount") {
                 triggerMapUpdate();
             }
             // ---------------------------------------------------------------
@@ -158,7 +158,14 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("SelectedTableNumber").value = "";
         notice.innerHTML = `Vui lòng chọn bàn/ghế sáng màu trên sơ đồ.`;
 
+        const guests = document.getElementById("GuestCount")?.value;
+
         if (area === "Omakase Counter") {
+            const isOmakaseExceeded = (guests === "9-12" || guests === "13+");
+            if (isOmakaseExceeded) {
+                notice.innerHTML = `<span style="color: #ff4d4d; font-weight: bold;">Cảnh báo: Quầy Omakase chỉ nhận nhóm tối đa 8 khách. Vui lòng liên hệ hotline.</span>`;
+            }
+
             let html = `
                 <div class="seating-area-omakase">
                     <div class="omakase-counter-line">
@@ -169,9 +176,11 @@ document.addEventListener("DOMContentLoaded", () => {
             for (let i = 1; i <= 12; i++) {
                 const tableId = `Omakase-${String(i).padStart(2, '0')}`;
                 const isOccupied = occupiedList.includes(tableId);
-                const statusClass = isOccupied ? "occupied" : "vacant";
+                const isCapacityFit = !isOmakaseExceeded;
+                const statusClass = isOccupied ? "occupied" : (isCapacityFit ? "vacant" : "unsuitable");
+                const seatStyle = isCapacityFit ? "" : "opacity: 0.25; cursor: not-allowed; pointer-events: none;";
                 html += `
-                    <div class="seat-item ${statusClass}" data-table="${tableId}">
+                    <div class="seat-item ${statusClass}" data-table="${tableId}" style="${seatStyle}">
                         <div class="seat-icon"></div>
                         <span class="seat-label">Ghế ${i}</span>
                     </div>
@@ -189,25 +198,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let html = `<div class="seating-area-vip">`;
             
-            let smallStatus = isSmallOccupied ? "occupied" : "vacant";
-            let smallStyle = isSmallChosen ? "" : "opacity: 0.25; cursor: not-allowed; pointer-events: none;";
+            const isSmallCapacityFit = (guests === "4" || guests === "5-6");
+            if (isSmallChosen && !isSmallCapacityFit) {
+                notice.innerHTML = `<span style="color: #ff4d4d; font-weight: bold;">Cảnh báo: Phòng VIP Nhỏ chỉ phục vụ từ 4-6 khách. Số lượng khách hiện tại không hợp lệ.</span>`;
+            }
+            let smallStatus = isSmallOccupied ? "occupied" : (isSmallCapacityFit ? "vacant" : "unsuitable");
+            let smallStyle = (isSmallChosen && isSmallCapacityFit) ? "" : "opacity: 0.25; cursor: not-allowed; pointer-events: none;";
+            let smallLabel = isSmallOccupied ? '<span class="badge-status-occupied">Đã đặt</span>' : (!isSmallCapacityFit && isSmallChosen ? '<span class="badge-status-occupied" style="background:#ffa500; font-size:0.55rem; padding: 1px 2px;">Không phù hợp</span>' : '');
+
             html += `
                 <div class="vip-room-card ${smallStatus}" data-table="VIP-Small" style="${smallStyle}">
                     <div class="vip-room-kanji">菊</div>
                     <span class="vip-room-name">VIP Nhỏ</span>
                     <span class="vip-room-capacity">4 - 6 Khách</span>
-                    ${isSmallOccupied ? '<span class="badge-status-occupied">Đã đặt</span>' : ''}
+                    ${smallLabel}
                 </div>
             `;
 
-            let largeStatus = isLargeOccupied ? "occupied" : "vacant";
-            let largeStyle = isLargeChosen ? "" : "opacity: 0.25; cursor: not-allowed; pointer-events: none;";
+            const isLargeCapacityFit = (guests === "7-8" || guests === "9-12");
+            if (isLargeChosen && !isLargeCapacityFit) {
+                notice.innerHTML = `<span style="color: #ff4d4d; font-weight: bold;">Cảnh báo: Phòng VIP Lớn phục vụ nhóm từ 8-12 khách. Số lượng khách hiện tại không hợp lệ.</span>`;
+            }
+            let largeStatus = isLargeOccupied ? "occupied" : (isLargeCapacityFit ? "vacant" : "unsuitable");
+            let largeStyle = (isLargeChosen && isLargeCapacityFit) ? "" : "opacity: 0.25; cursor: not-allowed; pointer-events: none;";
+            let largeLabel = isLargeOccupied ? '<span class="badge-status-occupied">Đã đặt</span>' : (!isLargeCapacityFit && isLargeChosen ? '<span class="badge-status-occupied" style="background:#ffa500; font-size:0.55rem; padding: 1px 2px;">Không phù hợp</span>' : '');
+
             html += `
                 <div class="vip-room-card ${largeStatus}" data-table="VIP-Large" style="${largeStyle}">
                     <div class="vip-room-kanji">松</div>
                     <span class="vip-room-name">VIP Lớn</span>
                     <span class="vip-room-capacity">8 - 12 Khách</span>
-                    ${isLargeOccupied ? '<span class="badge-status-occupied">Đã đặt</span>' : ''}
+                    ${largeLabel}
                 </div>
             `;
 
@@ -216,28 +237,47 @@ document.addEventListener("DOMContentLoaded", () => {
         } 
         else if (area === "Main Dining Room") {
             const tables = [
-                { id: "Table-2A", name: "Bàn Đôi A", desc: "2 khách - Sát hồ Koi" },
-                { id: "Table-2B", name: "Bàn Đôi B", desc: "2 khách - Sát hồ Koi" },
-                { id: "Table-2C", name: "Bàn Đôi C", desc: "2 khách - Sát hồ Koi" },
-                { id: "Table-2D", name: "Bàn Đôi D", desc: "2 khách - Hướng vườn" },
-                { id: "Table-4A", name: "Bàn 4A", desc: "4 khách - Sảnh chính" },
-                { id: "Table-4B", name: "Bàn 4B", desc: "4 khách - Sảnh chính" },
-                { id: "Table-4C", name: "Bàn 4C", desc: "4 khách - Sảnh chính" },
-                { id: "Table-4D", name: "Bàn 4D", desc: "4 khách - Sảnh chính" },
-                { id: "Table-LargeA", name: "Bàn Lớn A", desc: "6-8 khách - Góc thiền" },
-                { id: "Table-LargeB", name: "Bàn Lớn B", desc: "6-8 khách - Góc thiền" }
+                { id: "Table-2A", name: "Bàn Đôi A", desc: "2 khách - Sát hồ Koi", maxCap: 2 },
+                { id: "Table-2B", name: "Bàn Đôi B", desc: "2 khách - Sát hồ Koi", maxCap: 2 },
+                { id: "Table-2C", name: "Bàn Đôi C", desc: "2 khách - Sát hồ Koi", maxCap: 2 },
+                { id: "Table-2D", name: "Bàn Đôi D", desc: "2 khách - Hướng vườn", maxCap: 2 },
+                { id: "Table-4A", name: "Bàn 4A", desc: "4 khách - Sảnh chính", maxCap: 4 },
+                { id: "Table-4B", name: "Bàn 4B", desc: "4 khách - Sảnh chính", maxCap: 4 },
+                { id: "Table-4C", name: "Bàn 4C", desc: "4 khách - Sảnh chính", maxCap: 4 },
+                { id: "Table-4D", name: "Bàn 4D", desc: "4 khách - Sảnh chính", maxCap: 4 },
+                { id: "Table-LargeA", name: "Bàn Lớn A", desc: "6-8 khách - Góc thiền", maxCap: 8 },
+                { id: "Table-LargeB", name: "Bàn Lớn B", desc: "6-8 khách - Góc thiền", maxCap: 8 }
             ];
 
             let html = `<div class="seating-area-dining">`;
+            const isDiningExceeded = (guests === "9-12" || guests === "13+");
+            if (isDiningExceeded) {
+                notice.innerHTML = `<span style="color: #ff4d4d; font-weight: bold;">Cảnh báo: Sảnh chính chỉ phục vụ nhóm tối đa 8 khách. Vui lòng chọn cách ghép bàn hoặc liên hệ hotline.</span>`;
+            }
+
             tables.forEach(t => {
                 const isOccupied = occupiedList.includes(t.id);
-                const statusClass = isOccupied ? "occupied" : "vacant";
+                let isCapacityFit = true;
+                if (guests === "3" || guests === "4") {
+                    if (t.maxCap < 4) isCapacityFit = false;
+                } else if (guests === "5-6" || guests === "7-8") {
+                    if (t.maxCap < 8) isCapacityFit = false;
+                } else if (isDiningExceeded) {
+                    isCapacityFit = false;
+                }
+
+                const statusClass = isOccupied ? "occupied" : (isCapacityFit ? "vacant" : "unsuitable");
+                const cardStyle = isCapacityFit ? "" : "opacity: 0.25; cursor: not-allowed; pointer-events: none;";
+                const badgeMarkup = isOccupied 
+                    ? '<span class="badge-status-occupied">Đã đặt</span>' 
+                    : (!isCapacityFit && !isDiningExceeded ? '<span class="badge-status-occupied" style="background:#ffa500; font-size:0.55rem; padding: 1px 2px;">Không phù hợp</span>' : '');
+
                 html += `
-                    <div class="dining-table-card ${statusClass}" data-table="${t.id}">
+                    <div class="dining-table-card ${statusClass}" data-table="${t.id}" style="${cardStyle}">
                         <div class="table-visual"></div>
                         <span class="table-name">${t.name}</span>
                         <span class="table-desc">${t.desc}</span>
-                        ${isOccupied ? '<span class="badge-status-occupied">Đã đặt</span>' : ''}
+                        ${badgeMarkup}
                     </div>
                 `;
             });
@@ -302,22 +342,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // 3. Kiểm tra số lượng khách tương thích với khu vực phòng VIP và các sảnh khác
             if (area === "Small VIP Room") {
-                if (guests === "1" || guests === "2" || guests === "3" || guests === "9+") {
+                if (guests !== "4" && guests !== "5-6") {
                     alert("Phòng VIP Tatami Nhỏ chỉ phục vụ từ 4 đến 6 khách. Quý khách vui lòng chọn Sảnh Ăn Chung cho nhóm ít hơn hoặc Phòng VIP Tatami Lớn cho nhóm đông hơn.");
                     return;
                 }
             } else if (area === "Large VIP Room") {
-                if (guests === "1" || guests === "2" || guests === "3" || guests === "4") {
+                if (guests !== "7-8" && guests !== "9-12") {
                     alert("Phòng VIP Tatami Lớn phục vụ nhóm từ 8 đến 12 khách. Quý khách vui lòng chọn Phòng VIP Tatami Nhỏ hoặc Sảnh Ăn Chung.");
                     return;
                 }
             } else if (area === "Omakase Counter") {
-                if (guests === "9+") {
+                if (guests === "9-12" || guests === "13+") {
                     alert("Quầy Omakase Bar giới hạn phục vụ tối đa 12 ghế đơn và không chia bàn. Quý khách đặt nhóm trên 8 người vui lòng liên hệ trực tiếp hotline để được hỗ trợ sắp xếp vị trí phù hợp.");
                     return;
                 }
             } else if (area === "Main Dining Room") {
-                if (guests === "9+") {
+                if (guests === "9-12" || guests === "13+") {
                     alert("Sảnh chính Hồ Koi có kết cấu bàn tối đa phục vụ 8 khách. Quý khách đi nhóm trên 8 người vui lòng liên hệ hotline để ghép bàn trước hoặc thực hiện đặt nhiều bàn.");
                     return;
                 }
